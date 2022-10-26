@@ -94,8 +94,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ae2fdd6b9a0024da8a72996292f503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anim: {fileID: 0}
   gravity: 300
+  downWalkSpeed: 2
+  slowWalkSpeed: 3
+  WalkSpeed: 5
+  runSpeed: 8
   movSpeed: 5
   rotSpeed: 2
   maxXRot: 80

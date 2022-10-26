@@ -19,8 +19,13 @@ public class csPlayerCtrl : MonoBehaviour
     // 중력 
     public float gravity = 300.0f;
 
+    [SerializeField] private float downWalkSpeed = 2.0f;
+    [SerializeField] private float slowWalkSpeed = 3.0f;
+    [SerializeField] private float walkSpeed = 5.0f;
+    [SerializeField] private float runSpeed = 8.0f;
+
     // 케릭터 이동속도
-    public float movSpeed = 5.0f;
+    public float movSpeed;
     // 케릭터 회전속도
     public float rotSpeed = 2.0f;
 
@@ -44,6 +49,9 @@ public class csPlayerCtrl : MonoBehaviour
     Vector3 currPos = Vector3.zero;
     Quaternion currRot = Quaternion.identity;
 
+    float hor;
+    float ver;
+
 
     public PhotonView pv;
 
@@ -51,12 +59,11 @@ public class csPlayerCtrl : MonoBehaviour
     [HideInInspector] public bool isDie = false;
     private bool isSlow = false;
     private bool isDown = false;
+    private bool isRun = false;
 
 
     void Awake()
     {
-        transform.Find("Player_FP").gameObject.SetActive(false);
-        transform.Find("Player_TP").gameObject.SetActive(false);
         pv = GetComponent<PhotonView>();
         nav = GetComponent<NavMeshAgent>();
         controller = GetComponent<CharacterController>();
@@ -81,42 +88,153 @@ public class csPlayerCtrl : MonoBehaviour
             //플레이어 상태에 따라 애니메이션 동기화 코루틴 구현 예정
             StartCoroutine(this.PlayerAnimState());
         }
+        isSlow = false;
+        isDown = false;
+        isRun = false;
+        hor = 0;
+        ver = 0;
+        movSpeed = walkSpeed;
     }
     // Update is called once per frame
     void Update()
     {
-
+        //죽으면 Update 함수 실행 종료 추후 변경될 수 있음. + Coroutine까지 종료하거나 없애거나?
+        if (isDie)
+        {
+            return;
+            //StopAllCoroutines();
+        }
+        //추후 진행 예정 일단 3인칭 애니메이션 작동부터 확인.
+        //CharacterMoveState();
         CharacterMove();
         CharacterView();
         MouseOnOff();
+        MoveState();
 
+        //테스트 Scene 뷰에서 레이캐스트
+        TestRay();
         //캐릭터 State 변경하는 부분 함수로 구현 예정
         CharacterState();
     }
 
+    //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
+    void MoveState()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            isRun = true;
+            isDown = false;
+            isSlow = false;
+            movSpeed = runSpeed;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isRun = false;
+            movSpeed = walkSpeed;
+        }
+        else if (Input.GetKey(KeyCode.CapsLock) && !isSlow)
+        {
+            isSlow = true;
+            isDown = false;
+            isRun = false;
+            movSpeed = slowWalkSpeed;
+        }
+        else if (Input.GetKey(KeyCode.CapsLock) && isSlow)
+        {
+            isSlow = false;
+            isDown = false;
+            isRun = false;
+            movSpeed = walkSpeed;
+        }
+        else if (Input.GetKey(KeyCode.LeftControl) && !isDown)
+        {
+            isDown = true;
+            isSlow = false;
+            isRun = false;
+            movSpeed = downWalkSpeed;
+        }
+        else if (Input.GetKey(KeyCode.LeftControl) && isDown)
+        {
+            isDown = false;
+            isSlow = false;
+            isRun = false;
+            movSpeed = walkSpeed;
+        }
+    }
+
     //플레이어 상태에 따라 애니메이션 동기화 코루틴
+    //넘겨준 NetAnim숫자에 따라 애니메이션 동작  -> 추후 동작에 따라 순서 변경
     IEnumerator PlayerAnimState()
     {
-        while (!isDie)
+        switch (playerNetAnim)
         {
-
-            yield return new WaitForSeconds(0.1f);
+            case 0:
+                anim.SetTrigger("Die");
+                break;
+            case 1:
+                anim.SetBool("Run", true);
+                break;
+            case 2:
+                anim.SetBool("DownWalk", true);
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
         }
+        yield return new WaitForSeconds(0.1f);
+    }
+
+    //테스트레이
+    void TestRay()
+    {
+        Debug.DrawRay(playerCamera.position, playerCamera.transform.forward * 3f);
     }
 
     //캐릭터 State 변경하는 부분 함수로 구현 예정
     void CharacterState()
     {
-
+        if (isDie)
+        {
+            playerState = State.DIE;
+            playerNetAnim = 0;
+        }
+        else if (controller.velocity != Vector3.zero)
+        {
+            if (isRun)
+            {
+                playerNetAnim = 1;
+            }
+            else if (isDown)
+            {
+                playerNetAnim = 2;
+            }
+            else if (isSlow)
+            {
+                playerNetAnim = 3;
+            }
+            else
+            {
+                playerNetAnim = 4;
+            }
+        }
+        else
+        {
+            playerNetAnim = 5;
+        }
     }
+
 
 
     //캐릭터 상태 열거형
     public enum State
     {
         IDLE = 0,
-        SLOWWORK,
-        WORK,
+        SLOWWALK,
+        DOWNWALK,
+        WALK,
         RUN,
         DOOROPEN,
         DIE,
@@ -126,6 +244,7 @@ public class csPlayerCtrl : MonoBehaviour
         CHAIR,
         CABINET,
         DOWN,
+        //부적 먹었을 때 무적 발동 상태?
         RECOVERY
     }
 
@@ -196,8 +315,8 @@ public class csPlayerCtrl : MonoBehaviour
         if (pv.isMine)
         {
             #region 캐릭터 조작
-            float hor = Input.GetAxis("Horizontal") * movSpeed;
-            float ver = Input.GetAxis("Vertical") * movSpeed;
+            hor = Input.GetAxis("Horizontal") * movSpeed;
+            ver = Input.GetAxis("Vertical") * movSpeed;
 
             moveDirection = new Vector3(hor, 0, ver);
 
@@ -255,7 +374,5 @@ public class csPlayerCtrl : MonoBehaviour
             playerNetAnim = (int)stream.ReceiveNext();
         }
     }
-
-
 }
 
