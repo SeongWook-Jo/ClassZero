@@ -97,7 +97,7 @@ MonoBehaviour:
   gravity: 300
   downWalkSpeed: 2
   slowWalkSpeed: 3
-  WalkSpeed: 5
+  walkSpeed: 5
   runSpeed: 8
   movSpeed: 5
   rotSpeed: 2
@@ -653,7 +653,7 @@ Animator:
   m_GameObject: {fileID: 5646726815200165393}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 7e0043553097dc34e867f52b292bb164, type: 3}
-  m_Controller: {fileID: 9100000, guid: 85df2a06c0871084297e360f190a836b, type: 2}
+  m_Controller: {fileID: 9100000, guid: dde5279e8347bf44e9d99d741a43dfae, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
