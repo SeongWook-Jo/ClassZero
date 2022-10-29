@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class ReadyManager : MonoBehaviour
 {
+
+    private void Awake()
+    {
+        PhotonNetwork.isMessageQueueRunning = true;
+    }
     // Lobby로 되돌아감
     public void ReturnLobby()
     {

@@ -1015,11 +1015,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ae2fdd6b9a0024da8a72996292f503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  anim: {fileID: 0}
   gravity: 300
-  downWalkSpeed: 2
-  slowWalkSpeed: 3
-  walkSpeed: 5
-  runSpeed: 8
   movSpeed: 5
   rotSpeed: 2
   maxXRot: 80
@@ -1703,7 +1700,7 @@ Animator:
   m_GameObject: {fileID: 2966297924251629715}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 6f046a28acb55a743ac3d732fcac0054, type: 3}
-  m_Controller: {fileID: 9100000, guid: dde5279e8347bf44e9d99d741a43dfae, type: 2}
+  m_Controller: {fileID: 9100000, guid: 85df2a06c0871084297e360f190a836b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

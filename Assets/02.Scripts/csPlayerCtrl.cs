@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
@@ -31,8 +30,8 @@ public class csPlayerCtrl : MonoBehaviour
     public float rotSpeed = 2.0f;
 
     //최대 상하 각도 조절 변수
-    public float maxXRot = 80f;
-    public float minXRot = -80f;
+    public float maxXRot = 80;
+    public float minXRot = -80;
     public float smoothTime = 20f;
     private Quaternion m_CharacterTargetRot;
     private Quaternion m_CameraTargetRot;
@@ -56,23 +55,11 @@ public class csPlayerCtrl : MonoBehaviour
 
     public PhotonView pv;
 
-    //애니메이션을 위한 상태변수
+    //상태변수
     [HideInInspector] public bool isDie = false;
     private bool isSlow = false;
     private bool isDown = false;
     private bool isRun = false;
-    private bool isMove = false;
-    private bool isFind = false;
-    private bool isPickup = false;
-    private bool isStop = false;
-
-    //Raycast를 위한 변수
-    private Ray ray;
-    private RaycastHit hitInfo;
-    //현재 public으로 떼다 붙여서 구현했지만 private로 하고 스크립트로 가져오고싶음 참고사항
-    public GameObject TrigPopup;
-    public Text txtPopup;
-
 
 
     void Awake()
@@ -83,13 +70,6 @@ public class csPlayerCtrl : MonoBehaviour
         currPos = transform.position;
         currRot = transform.rotation;
         StartCoroutine(this.ActivePlayer());
-
-        if (pv.isMine)
-        {
-            TrigPopup = transform.Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
-            txtPopup = TrigPopup.transform.Find("txtObjectName").GetComponent<Text>();
-        }
-
     }
 
     // Start is called before the first frame update
@@ -101,14 +81,16 @@ public class csPlayerCtrl : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             m_CharacterTargetRot = transform.localRotation;
-            m_CameraTargetRot = playerCamera.localRotation;            
+            m_CameraTargetRot = playerCamera.localRotation;
         }
-
-        movSpeed = 3.0f;
-        downWalkSpeed = 1.0f;
-        slowWalkSpeed = 1.5f;
-        walkSpeed = 3.0f;
-        runSpeed = 4.0f;
+        else
+        {
+            //플레이어 상태에 따라 애니메이션 동기화 코루틴 구현 예정
+            StartCoroutine(this.PlayerAnimState());
+        }
+        isSlow = false;
+        isDown = false;
+        isRun = false;
         hor = 0;
         ver = 0;
         movSpeed = walkSpeed;
@@ -122,63 +104,22 @@ public class csPlayerCtrl : MonoBehaviour
             return;
             //StopAllCoroutines();
         }
-
-        //내부적으로 isMine 선언되어 있음
+        //추후 진행 예정 일단 3인칭 애니메이션 작동부터 확인.
+        //CharacterMoveState();
         CharacterMove();
         CharacterView();
         MouseOnOff();
+        MoveState();
 
-        if (pv.isMine)
-        {
-            //움직임 변경사항 적용
-            MoveState();
-            //캐릭터 State 변경하는 부분 함수로 구현 예정
-            CharacterState();
-            //레이캐스트로 상호작용 오브젝트 판별
-            PlayerRaycast();
-        }
-        else
-        {
-            PlayerAnimState();
-        }
-    }
-    void PlayerRaycast()
-    {
-        ray.origin = playerCamera.transform.position;
-        ray.direction = playerCamera.transform.forward;
-        //else문을 두개 넣어줘야 Raycast가 아무것도 없거나 콜라이더가 문이 아닐때 둘 다 false로 만들어줌
-        if(Physics.Raycast(ray,out hitInfo, 3f))
-        {
-            if(hitInfo.collider.tag == "Door")
-            {
-                txtPopup.text = "문 열림";
-                TrigPopup.SetActive(true);
-            }
-            else
-            {
-                TrigPopup.SetActive(false);
-            }
-        }
-        else
-        {
-            TrigPopup.SetActive(false);
-        }
-
-
-
+        //테스트 Scene 뷰에서 레이캐스트
+        TestRay();
+        //캐릭터 State 변경하는 부분 함수로 구현 예정
+        CharacterState();
     }
 
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
     void MoveState()
     {
-        //움직임이 있으면 is Move를 True로 변경
-        if (Mathf.Abs(hor) + Mathf.Abs(ver) > 0.1f)
-            isMove = true;
-        else
-            isMove = false;
-
-
-        //Shift, Ctrl, CapsLock 버튼에 따른 상태 변수 변경
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             isRun = true;
@@ -191,29 +132,28 @@ public class csPlayerCtrl : MonoBehaviour
             isRun = false;
             movSpeed = walkSpeed;
         }
-        else if (Input.GetKeyDown(KeyCode.CapsLock) && !isSlow)
+        else if (Input.GetKey(KeyCode.CapsLock) && !isSlow)
         {
             isSlow = true;
             isDown = false;
             isRun = false;
             movSpeed = slowWalkSpeed;
         }
-        else if (Input.GetKeyDown(KeyCode.CapsLock) && isSlow)
+        else if (Input.GetKey(KeyCode.CapsLock) && isSlow)
         {
             isSlow = false;
             isDown = false;
             isRun = false;
             movSpeed = walkSpeed;
         }
-        else if (Input.GetKeyDown(KeyCode.LeftControl) && !isDown)
+        else if (Input.GetKey(KeyCode.LeftControl) && !isDown)
         {
             isDown = true;
             isSlow = false;
             isRun = false;
             movSpeed = downWalkSpeed;
-            
         }
-        else if (Input.GetKeyDown(KeyCode.LeftControl) && isDown)
+        else if (Input.GetKey(KeyCode.LeftControl) && isDown)
         {
             isDown = false;
             isSlow = false;
@@ -224,35 +164,34 @@ public class csPlayerCtrl : MonoBehaviour
 
     //플레이어 상태에 따라 애니메이션 동기화 코루틴
     //넘겨준 NetAnim숫자에 따라 애니메이션 동작  -> 추후 동작에 따라 순서 변경
-    void PlayerAnimState()
+    IEnumerator PlayerAnimState()
     {
-        switch ((State)playerNetAnim)
+        switch (playerNetAnim)
         {
-            case State.IDLE:
-                anim.Play("Idle");
+            case 0:
+                anim.SetTrigger("Die");
                 break;
-            case State.RUN:
-                anim.Play("Run");
+            case 1:
+                anim.SetBool("Run", true);
                 break;
-            case State.DOWN:
-                anim.Play("Down");
+            case 2:
+                anim.SetBool("DownWalk", true);
                 break;
-            case State.DOWNWALK:
-                anim.Play("DownWalk");
+            case 3:
                 break;
-            case State.SLOWWALK:
-                anim.Play("SlowWalk");
+            case 4:
                 break;
-            case State.WALK:
-                anim.Play("Walk");
-                break;
-
-            case State.DIE:
-                anim.Play("Die");
+            default:
                 break;
         }
+        yield return new WaitForSeconds(0.1f);
     }
 
+    //테스트레이
+    void TestRay()
+    {
+        Debug.DrawRay(playerCamera.position, playerCamera.transform.forward * 3f);
+    }
 
     //캐릭터 State 변경하는 부분 함수로 구현 예정
     void CharacterState()
@@ -260,40 +199,30 @@ public class csPlayerCtrl : MonoBehaviour
         if (isDie)
         {
             playerState = State.DIE;
-            playerNetAnim = (int)State.DIE;
+            playerNetAnim = 0;
         }
-        else if (isMove)
+        else if (controller.velocity != Vector3.zero)
         {
             if (isRun)
             {
-                playerState = State.RUN;
-                playerNetAnim = (int)State.RUN;
+                playerNetAnim = 1;
             }
             else if (isDown)
             {
-                playerState = State.DOWNWALK;
-                playerNetAnim = (int)State.DOWNWALK;
+                playerNetAnim = 2;
             }
             else if (isSlow)
             {
-                playerState = State.SLOWWALK;
-                playerNetAnim = (int)State.SLOWWALK;
+                playerNetAnim = 3;
             }
             else
             {
-                playerState = State.WALK;
-                playerNetAnim = (int)State.WALK;
+                playerNetAnim = 4;
             }
-        }
-        else if(isDown)
-        {
-            playerState = State.DOWN;
-            playerNetAnim = (int)State.DOWN;
         }
         else
         {
-            playerState = State.IDLE;
-            playerNetAnim = (int)State.IDLE;
+            playerNetAnim = 5;
         }
     }
 
@@ -320,7 +249,7 @@ public class csPlayerCtrl : MonoBehaviour
     }
 
     //1인칭, 3인칭 캐릭터 활성화
-    IEnumerator ActivePlayer() 
+    IEnumerator ActivePlayer()
     {
         //자기자신은 FP 나머지는 TP를 SetActive
         //PhotonNetwork.Instantiate로 생성하면 문제생겨서 SetActive로 변경
@@ -361,7 +290,7 @@ public class csPlayerCtrl : MonoBehaviour
         else
         {
             //원격 플레이어의 아바타를 수신받은 각도만큼 부드럽게 회전시키자
-            transform.rotation = Quaternion.Slerp(transform.rotation, currRot, Time.deltaTime * 7.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, currRot, Time.deltaTime * 3.0f);
         }
     }
 
@@ -386,21 +315,10 @@ public class csPlayerCtrl : MonoBehaviour
         if (pv.isMine)
         {
             #region 캐릭터 조작
-
-            /*
-            이대로 구현하면 대각선 이동 시 빠르게 이동돼서 Normalize로 정규화 해주고 movSpeed를 곱해준다.
             hor = Input.GetAxis("Horizontal") * movSpeed;
             ver = Input.GetAxis("Vertical") * movSpeed;
 
             moveDirection = new Vector3(hor, 0, ver);
-            normalized 구현
-            */
-
-            //GetAxis로 하게되면 -1.0f ~ 1.0f 사이의 값을 반환하기 때문에 -1,0,1을 반환하는 GetAxisRaw로 구현
-            hor = Input.GetAxisRaw("Horizontal");
-            ver = Input.GetAxisRaw("Vertical");
-
-            moveDirection = Vector3.Normalize(new Vector3(hor, 0, ver)) * movSpeed;
 
             // transform.TransformDirection 함수는 인자로 전달된 벡터를 
             // 월드좌표계 기준으로 변환하여 변환된 벡터를 반환해 준다.
@@ -417,34 +335,8 @@ public class csPlayerCtrl : MonoBehaviour
         else
         {
             //원격 플레이어의 아바타를 수신받은 위치까지 부드럽게 이동시키자
-            transform.position = Vector3.Lerp(transform.position, currPos, Time.deltaTime * 7.0f);
+            transform.position = Vector3.Lerp(transform.position, currPos, Time.deltaTime * 3.0f);
         }
-    }
-
-
-    ////위치값,회전값,애니메이션값 전달
-    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        Debug.Log("탄다");
-        //isMine과 동일
-        if (stream.isWriting)
-        {
-            stream.SendNext(transform.position);
-            stream.SendNext(transform.rotation);
-            stream.SendNext(playerNetAnim);
-        }
-        else
-        {
-            currPos = (Vector3)stream.ReceiveNext();
-            currRot = (Quaternion)stream.ReceiveNext();
-            playerNetAnim = (int)stream.ReceiveNext();
-        }
-    }
-
-    //테스트레이
-    void TestRay()
-    {
-        Debug.DrawRay(playerCamera.position, playerCamera.transform.forward * 3f);
     }
 
     //X값 회전에 제한을 주기 위한 함수
@@ -464,6 +356,23 @@ public class csPlayerCtrl : MonoBehaviour
         return q;
     }
 
+    ////위치값,회전값,애니메이션값 전달
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        Debug.Log("탄다");
+        //isMine과 동일
+        if (stream.isWriting)
+        {
+            stream.SendNext(transform.position);
+            stream.SendNext(transform.rotation);
+            stream.SendNext(playerNetAnim);
+        }
+        else
+        {
+            currPos = (Vector3)stream.ReceiveNext();
+            currRot = (Quaternion)stream.ReceiveNext();
+            playerNetAnim = (int)stream.ReceiveNext();
+        }
+    }
 }
-
 
