@@ -17,5 +17,9 @@ public class ReadyManager : MonoBehaviour
         //GameObject.Find("").GetComponent<Canvas>().enabled = false;
 
         SceneManager.LoadScene("scNetLobby");
+
+        PhotonNetwork.LeaveRoom();
     }
+
+    
 }
