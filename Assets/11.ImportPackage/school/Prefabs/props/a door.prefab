@@ -111,7 +111,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4173873760860446}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0.42048004, z: 0}
 --- !u!33 &33218900247378062
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -138,9 +138,6 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 2100000, guid: 30b92673b9b7ef44c9c11a474d9910c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -185,6 +182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4173873760860446}
+  - component: {fileID: 5124915046628067755}
   m_Layer: 0
   m_Name: a door
   m_TagString: Untagged
@@ -208,3 +206,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!111 &5124915046628067755
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1965528337302418}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: ee21bd49dbc5e0d439ad3b56be02773a, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: ee21bd49dbc5e0d439ad3b56be02773a, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
