@@ -1,7 +1,7 @@
 ﻿//using System.Collections;
 //using System.Collections.Generic;
 //using UnityEngine;
-//using UnityEngine.SceneManagement;  
+//using UnityEngine.SceneManagement;
 
 //public class csPhotonInit : MonoBehaviour
 //{
@@ -39,7 +39,7 @@
 
 //        //테스트용 Room 조인, 실패시 방 생성
 //        PhotonNetwork.JoinRandomRoom();
-//     }
+//    }
 
 //    //포톤 클라우드는 Random Match Making 기능 제공(로비 입장 후 이미 생성된 룸 중에서 무작위로 선택해 입장)
 //    //무작위 룸 접속(입장)에 실패한 경우 호출되는 콜백 함수 
