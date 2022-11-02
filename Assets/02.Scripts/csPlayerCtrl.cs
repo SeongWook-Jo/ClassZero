@@ -73,7 +73,13 @@ public class csPlayerCtrl : MonoBehaviour
     public GameObject TrigPopup;
     public Text txtPopup;
 
+    //미니맵 연동
+    private Image imgMap;
+    private RectTransform rectrPlayerDot;
+    public Sprite[] sprMap;
 
+    // 자신의 Transform 간단하게 쓰기위해 선언
+    private Transform mytr;
 
     void Awake()
     {
@@ -86,8 +92,11 @@ public class csPlayerCtrl : MonoBehaviour
 
         if (pv.isMine)
         {
-            TrigPopup = transform.Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
+            TrigPopup = transform.Find("Player_FP").Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
             txtPopup = TrigPopup.transform.Find("txtObjectName").GetComponent<Text>();
+            imgMap = transform.Find("Player_FP").Find("Canvas_User_UI").Find("Minimap").Find("imgMap").GetComponent<Image>();
+            rectrPlayerDot = imgMap.transform.Find("PlayerDot").GetComponent<RectTransform>();
+            mytr = GetComponent<Transform>();
         }
 
     }
@@ -136,11 +145,17 @@ public class csPlayerCtrl : MonoBehaviour
             CharacterState();
             //레이캐스트로 상호작용 오브젝트 판별
             PlayerRaycast();
+            //미니맵업데이트
+            MinimapUpdate();
         }
         else
         {
             PlayerAnimState();
         }
+    }
+    void MinimapUpdate()
+    {
+        rectrPlayerDot.anchoredPosition = new Vector2((mytr.position.x * 4.106f) + 66.8f, (mytr.position.z * 4.172f) + 78.5f);
     }
     void PlayerRaycast()
     {
@@ -171,11 +186,22 @@ public class csPlayerCtrl : MonoBehaviour
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
     void MoveState()
     {
-        //움직임이 있으면 is Move를 True로 변경
+        //키입력이 있으면 is Move를 True로 변경 추후 isDie를 넣어야할듯?
         if (Mathf.Abs(hor) + Mathf.Abs(ver) > 0.1f)
             isMove = true;
         else
             isMove = false;
+
+
+        //앉을 때 천천히 앉고 일어설 때 천천히 일어서도록 구현
+        if (isDown)
+        {
+            playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, new Vector3(0, 0.75f, 0), Time.deltaTime * 3.0f);
+        }
+        else
+        {
+            playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, new Vector3(0, 1.43f, 0), Time.deltaTime * 3.0f);
+        }
 
 
         //Shift, Ctrl, CapsLock 버튼에 따른 상태 변수 변경
@@ -211,7 +237,6 @@ public class csPlayerCtrl : MonoBehaviour
             isSlow = false;
             isRun = false;
             movSpeed = downWalkSpeed;
-            
         }
         else if (Input.GetKeyDown(KeyCode.LeftControl) && isDown)
         {
@@ -441,11 +466,6 @@ public class csPlayerCtrl : MonoBehaviour
         }
     }
 
-    //테스트레이
-    void TestRay()
-    {
-        Debug.DrawRay(playerCamera.position, playerCamera.transform.forward * 3f);
-    }
 
     //X값 회전에 제한을 주기 위한 함수
     Quaternion ClampRotationAroundXAxis(Quaternion q)
