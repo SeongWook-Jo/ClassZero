@@ -68,7 +68,7 @@ public class csPlayerCtrl : MonoBehaviour
 
     //Raycast를 위한 변수
     private Ray ray;
-    private RaycastHit hitInfo;
+    private RaycastHit[] hitInfo;
     //현재 public으로 떼다 붙여서 구현했지만 private로 하고 스크립트로 가져오고싶음 참고사항
     public GameObject TrigPopup;
     public Text txtPopup;
@@ -110,7 +110,7 @@ public class csPlayerCtrl : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             m_CharacterTargetRot = transform.localRotation;
-            m_CameraTargetRot = playerCamera.localRotation;            
+            m_CameraTargetRot = playerCamera.localRotation;
         }
 
         movSpeed = 3.0f;
@@ -159,27 +159,57 @@ public class csPlayerCtrl : MonoBehaviour
     }
     void PlayerRaycast()
     {
+        TrigPopup.SetActive(false);
         ray.origin = playerCamera.transform.position;
         ray.direction = playerCamera.transform.forward;
         //else문을 두개 넣어줘야 Raycast가 아무것도 없거나 콜라이더가 문이 아닐때 둘 다 false로 만들어줌
-        if(Physics.Raycast(ray,out hitInfo, 3f))
+        //if (Physics.Raycast(ray, out hitInfo, 1f))
+        //{
+        //    if (hitInfo.collider.tag == "Door")
+        //    {
+        //        txtPopup.text = "문 열림";
+        //        TrigPopup.SetActive(true);
+        //    }
+        //    else
+        //    {
+        //        TrigPopup.SetActive(false);
+        //    }
+        //}
+        //else
+        //{
+        //    TrigPopup.SetActive(false);
+        //}
+        hitInfo = Physics.RaycastAll(ray, 1.0f);
+
+
+        foreach(RaycastHit a in hitInfo)
         {
-            if(hitInfo.collider.tag == "Door")
+            if (a.collider.tag == "Door")
             {
-                txtPopup.text = "문 열림";
+                txtPopup.text = "";
                 TrigPopup.SetActive(true);
+                if(Input.GetMouseButton(0))
+                {
+                    a.collider.GetComponent<Animator>().SetTrigger("OnOff");
+                }
+                return;
             }
-            else
+            if(a.collider.tag == "Switch")
             {
-                TrigPopup.SetActive(false);
+                txtPopup.text = "";
+                TrigPopup.SetActive(true);
+                if (Input.GetMouseButton(0))
+                {
+                    a.collider.transform.parent.GetComponent<Animator>().SetTrigger("OnOff");
+                }
+                return;
+            }
+            if(a.collider.tag == "Item")
+            {
+
             }
         }
-        else
-        {
-            TrigPopup.SetActive(false);
-        }
-
-
+        
 
     }
 
@@ -310,7 +340,7 @@ public class csPlayerCtrl : MonoBehaviour
                 playerNetAnim = (int)State.WALK;
             }
         }
-        else if(isDown)
+        else if (isDown)
         {
             playerState = State.DOWN;
             playerNetAnim = (int)State.DOWN;
@@ -345,7 +375,7 @@ public class csPlayerCtrl : MonoBehaviour
     }
 
     //1인칭, 3인칭 캐릭터 활성화
-    IEnumerator ActivePlayer() 
+    IEnumerator ActivePlayer()
     {
         //자기자신은 FP 나머지는 TP를 SetActive
         //PhotonNetwork.Instantiate로 생성하면 문제생겨서 SetActive로 변경
@@ -398,9 +428,13 @@ public class csPlayerCtrl : MonoBehaviour
             //ESC입력으로 마우스 보이게 하기
             if (Input.GetKey(KeyCode.Escape))
             {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
+                if (Cursor.visible == false)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
             }
+
         }
     }
 
