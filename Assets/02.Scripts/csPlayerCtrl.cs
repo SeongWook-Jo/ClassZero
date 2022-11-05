@@ -159,26 +159,31 @@ public class csPlayerCtrl : MonoBehaviour
     }
     void PlayerRaycast()
     {
+        //아무것도 안띄우는걸 Default로 설정 
         TrigPopup.SetActive(false);
         ray.origin = playerCamera.transform.position;
         ray.direction = playerCamera.transform.forward;
+        /*
         //else문을 두개 넣어줘야 Raycast가 아무것도 없거나 콜라이더가 문이 아닐때 둘 다 false로 만들어줌
-        //if (Physics.Raycast(ray, out hitInfo, 1f))
-        //{
-        //    if (hitInfo.collider.tag == "Door")
-        //    {
-        //        txtPopup.text = "문 열림";
-        //        TrigPopup.SetActive(true);
-        //    }
-        //    else
-        //    {
-        //        TrigPopup.SetActive(false);
-        //    }
-        //}
-        //else
-        //{
-        //    TrigPopup.SetActive(false);
-        //}
+        if (Physics.Raycast(ray, out hitInfo, 1f))
+        {
+            if (hitInfo.collider.tag == "Door")
+            {
+                txtPopup.text = "문 열림";
+                TrigPopup.SetActive(true);
+            }
+            else
+            {
+                TrigPopup.SetActive(false);
+            }
+        }
+        else
+        {
+            TrigPopup.SetActive(false);
+        }
+        */
+
+        //Raycast로 진행 시 이상한 충돌로 인해 정상적으로 안되는 경우가 있음. 무겁지만 RaycastAll로 진행
         hitInfo = Physics.RaycastAll(ray, 1.0f);
 
 
@@ -188,19 +193,25 @@ public class csPlayerCtrl : MonoBehaviour
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
-                if(Input.GetMouseButton(0))
+                if(Input.GetMouseButtonDown(0))
                 {
-                    a.collider.GetComponent<Animator>().SetTrigger("OnOff");
+                    //맵에서 parent 구조 변경 가능하면 하는게 맞다고 생각함. 
+                    a.collider.transform.parent.parent.GetComponent<Animator>().SetTrigger("OnOff");
                 }
                 return;
             }
-            if(a.collider.tag == "Switch")
+            if(a.collider.tag == "Swich")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
-                if (Input.GetMouseButton(0))
+                //부모오브젝트에서 아래에 있는 모든 Light Component OnOff 발동
+                if (Input.GetMouseButtonDown(0))
                 {
-                    a.collider.transform.parent.GetComponent<Animator>().SetTrigger("OnOff");
+                    Light[] li = a.collider.transform.parent.GetComponentsInChildren<Light>();
+                    foreach(Light l in li)
+                    {
+                        l.enabled = !l.enabled;
+                    }
                 }
                 return;
             }

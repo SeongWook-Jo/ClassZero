@@ -73,7 +73,7 @@ public class SoundManager : MonoBehaviour
         //PlaySoundBtn.SetActive(false);
     }
 
-    public void SoundUiClose()
+    public void OnClickSoundUi_Close()
     {
         Sound.SetActive(false);
         //PlaySoundBtn.SetActive(true);
