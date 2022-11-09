@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: Ver 0.1.0
-  logLevel: 0
+  logLevel: 2
   roomName: {fileID: 1919736221}
   scrollContents: {fileID: 1867046282}
   roomItem: {fileID: 4149861057944553059, guid: a15e0051d4cb8ea4393137a574d49bac,

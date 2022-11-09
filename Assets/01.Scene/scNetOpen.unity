@@ -2631,7 +2631,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1879941823}
-        m_MethodName: SoundUiClose
+        m_MethodName: OnClickSoundUi_Close
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

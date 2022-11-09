@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IGhost
+interface IGhost
 {
+    void Move();
+    void Trace();
     void PlayerKill();
+
 }

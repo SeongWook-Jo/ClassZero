@@ -19,7 +19,6 @@ public class csStageManager : MonoBehaviour
 
         //캐릭터 생성 코루틴 실행
         StartCoroutine(this.CreatePlayer());
-        StartCoroutine(CreateEnemy());
     }
     // Start is called before the first frame update
     void Start()
@@ -31,10 +30,6 @@ public class csStageManager : MonoBehaviour
     IEnumerator CreatePlayer()
     {
         PhotonNetwork.Instantiate("Player"+room.PlayerCount, playerSpawners[room.PlayerCount].position, playerSpawners[room.PlayerCount].rotation, 0);
-        yield return null;
-    }
-    IEnumerator CreateEnemy()
-    {
         yield return null;
     }
 }
