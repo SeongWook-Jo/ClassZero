@@ -325,7 +325,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4801399138988634}
-  - component: {fileID: 3845611530509673047}
   m_Layer: 0
   m_Name: Toilet cabine Prefab
   m_TagString: Untagged
@@ -349,25 +348,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &3845611530509673047
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1910999532234760}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 95b06c68984a4d24fb8023fe0073a551, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1990228191343320
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,7 +469,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822509705506743586}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.379, y: -0.05, z: -0.17}
+  m_LocalPosition: {x: -0.379, y: -0.025, z: -0.17}
   m_LocalScale: {x: 0.2, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 5723356023688620476}
@@ -567,6 +547,7 @@ GameObject:
   - component: {fileID: 1171701796353596550}
   - component: {fileID: 5732754145992664630}
   - component: {fileID: 4434312342702821199}
+  - component: {fileID: 362428566029469491}
   m_Layer: 0
   m_Name: ToiletDoor
   m_TagString: Untagged
@@ -649,6 +630,25 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &362428566029469491
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1166962740122859908}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ff576b5b880b12c4aa3e8d30e83a8a8c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2267883179700284585
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,7 +674,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2267883179700284585}
   m_LocalRotation: {x: 0.5000873, y: -0.4999128, z: -0.5000872, w: 0.4999127}
-  m_LocalPosition: {x: -3.3431168, y: -0.06953813, z: -0.015022157}
+  m_LocalPosition: {x: -3.3431168, y: -0.07, z: -0.027}
   m_LocalScale: {x: 0.9854324, y: 0.4699691, z: 20}
   m_Children:
   - {fileID: 4019691107091504139}
@@ -703,6 +703,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2990564387221008202}
+  - component: {fileID: 3759766788150734505}
   m_Layer: 0
   m_Name: pivot
   m_TagString: Untagged
@@ -725,3 +726,22 @@ Transform:
   m_Father: {fileID: 4923394495956958}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3759766788150734505
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4089355178900403395}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6313efc15303f2e42b7b8347de464573, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
