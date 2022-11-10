@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6097888535368215292}
   m_Layer: 0
   m_Name: DoorHand
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,6 +44,25 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.12, y: 0.1, z: 0.15}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &6551217854455932276
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1623971777566604046}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 442e1f61e11315f4eb64dcdbb6380ffa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2597824865886567241
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +75,7 @@ GameObject:
   - component: {fileID: 9131884445146859048}
   m_Layer: 0
   m_Name: DoorHand
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,7 +116,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3893104545189848668}
-  - component: {fileID: 6702025657770583250}
   m_Layer: 0
   m_Name: TwoDoor
   m_TagString: Untagged
@@ -121,25 +139,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6702025657770583250
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110810843535583088}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7d7331914f3f5ab4cb30ad9d6c1e92ba, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &537360326925853267
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -207,8 +206,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 3375229836647349501, guid: 2f91276de7c55894daf22ad8f81ca24c,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: a0224ca7360f0ec4680197cb37adfa16, type: 2}
+    m_RemovedComponents:
+    - {fileID: 0}
+    - {fileID: 3375229836647349501, guid: 2f91276de7c55894daf22ad8f81ca24c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2f91276de7c55894daf22ad8f81ca24c, type: 3}
+--- !u!1 &1623971777566604046 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1296077802408270173, guid: 2f91276de7c55894daf22ad8f81ca24c,
+    type: 3}
+  m_PrefabInstance: {fileID: 537360326925853267}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1623971777566369582 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1296077802408756605, guid: 2f91276de7c55894daf22ad8f81ca24c,
@@ -288,7 +300,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 3375229836647349501, guid: 2f91276de7c55894daf22ad8f81ca24c,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: a0224ca7360f0ec4680197cb37adfa16, type: 2}
+    m_RemovedComponents:
+    - {fileID: 1296077802398886557, guid: 2f91276de7c55894daf22ad8f81ca24c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 2f91276de7c55894daf22ad8f81ca24c, type: 3}
 --- !u!4 &6924200845605302444 stripped
 Transform:
