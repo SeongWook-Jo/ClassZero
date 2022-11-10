@@ -495,7 +495,6 @@ public class csPlayerCtrl : MonoBehaviour
     ////위치값,회전값,애니메이션값 전달
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        Debug.Log("탄다");
         //isMine과 동일
         if (stream.isWriting)
         {

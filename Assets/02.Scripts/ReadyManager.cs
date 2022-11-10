@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 
 public class ReadyManager : MonoBehaviour
@@ -23,6 +24,13 @@ public class ReadyManager : MonoBehaviour
     public Text msg;
     public InputField intput;
     ScrollRect scroll_rect = null;
+    //chat을 위한 변수 선언
+    //public Text chatLog;
+    //public Text msg;
+    //public InputField intput;
+    //ScrollRect scroll_rect = null;
+    public InputField chatMsg;  // 메시지 받고
+    public Text txtChatMsg; // 메시지 표시하고
 
 
     void Awake()
@@ -35,7 +43,6 @@ public class ReadyManager : MonoBehaviour
 
     void Start()
     {
-        Debug.Log(playerReady.Length);
         {
             playerNumber[PhotonNetwork.player.ID] = 0;
             playerReady[0] = false;
@@ -46,7 +53,6 @@ public class ReadyManager : MonoBehaviour
     private void Update()
     {
 
-        Debug.Log(playerReady[0] + " " + playerReady[1] + " " + playerReady[2]);
         if (!playerReady[0] != null)
             PR[0] = (bool)playerReady[0];
         if (playerReady[1] != null)
@@ -69,7 +75,7 @@ public class ReadyManager : MonoBehaviour
 
     }
 
-    // Lobby로 되돌아감
+    // Lobby로 되돌아감f
     public void OnClickReturnLobby()
     {
         // "안의 캔버스 컴포넌트 비활성화"
@@ -123,8 +129,23 @@ public class ReadyManager : MonoBehaviour
     }
 
 
-    public void OnClickStartGame()  // 스타트 게임 버튼을 누르면 InGame 씬으로 전환
+    public void OnClickStartGame()  // 스타트 게임 버튼을 누르면 InGame 씬으로 전환 + 플레이어 값을 넘겨줌
     {
+        //해쉬테이블로 NumberInRoom라는 Key값으로 Value저장
+        //현재 방에 있는 유저목록 불러옴
+        PhotonPlayer[] players =  PhotonNetwork.playerList;
+        //Key, Value 저장을 위한 해쉬테이블 생성 해쉬테이블 배열로 했으나 NullReference로 인해서 변수 한개로 생성
+        Hashtable playerOpth = new Hashtable();
+        for(int i = 0;i<PhotonNetwork.room.PlayerCount; i++)
+        {
+            //배정된 위치를 할당해줌 PR[x] 
+            playerOpth.Add("NumberInRoom", playerNumber[players[i].ID]);
+            //커스텀 속성을 만들어서 저장
+            players[i].SetCustomProperties(playerOpth);
+            //배열이 아니기 때문에 지워주고 다시 for문 진행
+            playerOpth.Remove("NumberInRoom");
+        }
+
         //PhotonNetwork.automaticallySyncScene; 어디?
         PhotonNetwork.LoadLevel("scNetInGame");
 
@@ -149,16 +170,30 @@ public class ReadyManager : MonoBehaviour
     }
 
     // Chatting --------------------------------
-    public void SendButtonOnClicked()  //전송 버튼이 눌리면 실행될 메소드, 메세지 전송을 담당
+    //public void SendButtonOnClicked()  //전송 버튼이 눌리면 실행될 메소드, 메세지 전송을 담당
+    //{
+    //    //if()
+    //}
+
+    //[PunRPC]
+    //public void ReceiveMsg(string msg) //전송된 메세지를 받을 이들이 실행할 것
+    //{
+    //    chatLog.text += "\n" + msg;
+    //    scroll_rect.verticalNormalizedPosition = 0.0f;
+    //}
+    [PunRPC]
+    void ChatMsg(string ctmsg)
     {
-        //if()
+        //chatMsg.text = chatMsg.Tostring();
+        txtChatMsg.text = txtChatMsg.text + ctmsg;  //채팅 메시지 Tex UI에 텍스트를 누적시켜서 표시
     }
 
-    [PunRPC]
-    public void ReceiveMsg(string msg) //전송된 메세지를 받을 이들이 실행할 것
+    public void OnClickChatMsgSend()
     {
-        chatLog.text += "\n" + msg;
-        scroll_rect.verticalNormalizedPosition = 0.0f;
+        //채팅 메시지에 출력할 문자열 생성
+        string ctmsg = "\n\t<color=#ffffff>[" + PhotonNetwork.player.NickName + "] </color>" + chatMsg.text;  //"\n\t<color=#ffffff>[" + chatMsg.text + "] </color>";
+        pv.RPC("ChatMsg", PhotonTargets.All, ctmsg);
+        chatMsg.text = "";
     }
 
     //chatting ----------------------------------

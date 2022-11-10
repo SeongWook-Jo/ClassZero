@@ -45,4 +45,8 @@ MonoBehaviour:
   - TaggedPlayer
   - PlayerIdSend
   - Ready
+  - CharacterOnOff
+  - ReceiveMsg
+  - ChatMsg
+  - PlaySpwnDisable
   DisableAutoOpenWizard: 1
