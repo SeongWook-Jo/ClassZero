@@ -27,14 +27,14 @@ public class csStageManager : MonoBehaviour
         PhotonPlayer[] players = PhotonNetwork.playerList;
         //캐릭터 생성 코루틴 실행
         StartCoroutine(this.CreatePlayer());
-        StartCoroutine(CreateEnemy());
+        //StartCoroutine(CreateEnemy());
     }
 
     //캐릭터 생성 코루틴, 자기 자신은 1인칭 플레이어 생성 다른 사람에겐 3인칭 플레이어 생성.
     IEnumerator CreatePlayer()
     {
         //랜덤값 적용으로 다른 플레이어와 코루틴이 동시에 실행돼서 같은 위치에 생성되는 현상 방지
-        yield return new WaitForSeconds(Random.Range(0.1f,1.0f));
+        yield return new WaitForSeconds(Random.Range(0.1f,3.0f));
         //입장한 플레이어가 방에서 몇번째 플레이어인지 확인
         int myNumInRoom = (int)PhotonNetwork.player.CustomProperties["NumberInRoom"];
         //플레이어 랜덤 위치 선정을 위해 난수 생성

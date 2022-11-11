@@ -143,11 +143,13 @@ public class csPlayerCtrl : MonoBehaviour
             MoveState();
             //캐릭터 State 변경하는 부분 함수로 구현 예정
             CharacterState();
-            //레이캐스트로 상호작용 오브젝트 판별
-            PlayerRaycast();
             //미니맵업데이트
             MinimapUpdate();
+            //Raycast 트리거
+            PlayerRaycast();
         }
+        //레이캐스트로 상호작용 오브젝트 판별
+
         else
         {
             PlayerAnimState();
@@ -189,14 +191,17 @@ public class csPlayerCtrl : MonoBehaviour
 
         foreach(RaycastHit a in hitInfo)
         {
-            if (a.collider.tag == "Door")
+            if (a.collider.tag == "Door" || a.collider.tag == "Locker")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
                 if(Input.GetMouseButtonDown(0))
                 {
                     //맵에서 parent 구조 변경 가능하면 하는게 맞다고 생각함. 
-                    a.collider.transform.parent.parent.GetComponent<Animator>().SetTrigger("OnOff");
+                    //전체 플레이어에게 동기화를 해주기 위해 pv.RPC로 쏴줌.
+                    //pv.RPC("AnimSyncDoor", PhotonTargets.All, a.collider.transform.parent.parent.gameObject);
+                    //a.collider.transform.parent.parent.GetComponent<Animator>().SetTrigger("OnOff");
+                    a.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
                 }
                 return;
             }
@@ -207,15 +212,16 @@ public class csPlayerCtrl : MonoBehaviour
                 //부모오브젝트에서 아래에 있는 모든 Light Component OnOff 발동
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Light[] li = a.collider.transform.parent.GetComponentsInChildren<Light>();
-                    foreach(Light l in li)
-                    {
-                        l.enabled = !l.enabled;
-                    }
+                    //Light[] li = a.collider.transform.parent.GetComponentsInChildren<Light>();
+                    a.collider.transform.parent.SendMessage("LightOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    //foreach (Light l in li)
+                    //{
+                    //    l.enabled = !l.enabled;
+                    //}
                 }
                 return;
             }
-            if(a.collider.tag == "Item")
+            if (a.collider.tag == "Item")
             {
 
             }
@@ -223,7 +229,11 @@ public class csPlayerCtrl : MonoBehaviour
         
 
     }
-
+    [PunRPC]
+    void AnimSyncDoor(GameObject a)
+    {
+        a.GetComponent<Animator>().SetTrigger("OnOff");
+    }
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
     void MoveState()
     {
