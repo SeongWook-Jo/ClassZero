@@ -27,7 +27,7 @@ public class csStageManager : MonoBehaviour
         PhotonPlayer[] players = PhotonNetwork.playerList;
         //캐릭터 생성 코루틴 실행
         StartCoroutine(this.CreatePlayer());
-        //StartCoroutine(CreateEnemy());
+        StartCoroutine(CreateEnemy());
     }
 
     //캐릭터 생성 코루틴, 자기 자신은 1인칭 플레이어 생성 다른 사람에겐 3인칭 플레이어 생성.

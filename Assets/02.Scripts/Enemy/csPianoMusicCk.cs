@@ -14,5 +14,4 @@ public class csPianoMusicCk : MonoBehaviour
         if (other.tag == "Player")
             transform.parent.GetComponent<csEnemyPiano>().playerCount -= 1;
     }
-
 }

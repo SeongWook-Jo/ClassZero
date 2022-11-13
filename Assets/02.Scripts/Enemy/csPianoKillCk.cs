@@ -4,15 +4,35 @@ using UnityEngine;
 
 public class csPianoKillCk : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject[] players= new GameObject[3];
+    private void Start()
     {
-        
+        players = new GameObject[3] { null, null, null };
     }
-
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if(other.tag == "Player")
+        {
+            for(int i = 0; i<players.Length; i++)
+            {
+                if(players[i] == null)
+                {
+                    players[i] = other.gameObject;
+                }
+            }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Player")
+        {
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i] == other.gameObject)
+                {
+                    players[i] = null;
+                }
+            }
+        }
     }
 }

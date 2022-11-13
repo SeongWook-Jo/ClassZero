@@ -55,4 +55,5 @@ MonoBehaviour:
   - PlayLightAnim
   - DoorAnim
   - LightAnim
+  - ChairAnim
   DisableAutoOpenWizard: 1

@@ -149,7 +149,6 @@ public class csPlayerCtrl : MonoBehaviour
             PlayerRaycast();
         }
         //레이캐스트로 상호작용 오브젝트 판별
-
         else
         {
             PlayerAnimState();
@@ -159,6 +158,7 @@ public class csPlayerCtrl : MonoBehaviour
     {
         rectrPlayerDot.anchoredPosition = new Vector2((mytr.position.x * 4.106f) + 66.8f, (mytr.position.z * 4.172f) + 78.5f);
     }
+    //레이캐스트
     void PlayerRaycast()
     {
         //아무것도 안띄우는걸 Default로 설정 
@@ -189,23 +189,41 @@ public class csPlayerCtrl : MonoBehaviour
         hitInfo = Physics.RaycastAll(ray, 1.0f);
 
 
-        foreach(RaycastHit a in hitInfo)
+        foreach (RaycastHit a in hitInfo)
         {
             if (a.collider.tag == "Door" || a.collider.tag == "Locker")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
-                if(Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0))
                 {
-                    //맵에서 parent 구조 변경 가능하면 하는게 맞다고 생각함. 
                     //전체 플레이어에게 동기화를 해주기 위해 pv.RPC로 쏴줌.
-                    //pv.RPC("AnimSyncDoor", PhotonTargets.All, a.collider.transform.parent.parent.gameObject);
-                    //a.collider.transform.parent.parent.GetComponent<Animator>().SetTrigger("OnOff");
+                    //csTrigObj 스크립트 내에 함수 실행
                     a.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
                 }
                 return;
             }
-            if(a.collider.tag == "Swich")
+            if (a.collider.tag == "Chair")
+            {
+                txtPopup.text = "";
+                TrigPopup.SetActive(true);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    a.collider.transform.SendMessage("ChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                }
+                return;
+            }
+            if (a.collider.tag == "OfficeChair")
+            {
+                txtPopup.text = "";
+                TrigPopup.SetActive(true);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    a.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                }
+                return;
+            }
+            if (a.collider.tag == "Swich")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
@@ -226,14 +244,10 @@ public class csPlayerCtrl : MonoBehaviour
 
             }
         }
-        
+
 
     }
-    [PunRPC]
-    void AnimSyncDoor(GameObject a)
-    {
-        a.GetComponent<Animator>().SetTrigger("OnOff");
-    }
+
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
     void MoveState()
     {
@@ -322,7 +336,6 @@ public class csPlayerCtrl : MonoBehaviour
             case State.WALK:
                 anim.Play("Walk");
                 break;
-
             case State.DIE:
                 anim.Play("Die");
                 break;
@@ -536,6 +549,18 @@ public class csPlayerCtrl : MonoBehaviour
         q.x = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleX);
 
         return q;
+    }
+
+    public void Die()
+    {
+        isDie = true;
+    }
+
+    public void PianoDie(Transform enemyTr)
+    {
+        isStop = true;
+        transform.LookAt(enemyTr);
+
     }
 
 }
