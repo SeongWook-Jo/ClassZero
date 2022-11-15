@@ -445,8 +445,6 @@ public class csPlayerCtrl : MonoBehaviour
         }
     }
 
-
-
     //캐릭터 상태 열거형
     public enum State
     {
@@ -616,6 +614,7 @@ public class csPlayerCtrl : MonoBehaviour
     [ContextMenu("DieTest")]
     public void Die()
     {
+        Debug.Log("죽음실행");
         StartCoroutine("DieAction");
     }
     public IEnumerator DieAction()
