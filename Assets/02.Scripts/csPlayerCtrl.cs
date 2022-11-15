@@ -17,9 +17,6 @@ public class csPlayerCtrl : MonoBehaviour
     //3인칭 캐릭터 애니메이터 연결
     private Animator anim;
 
-    // 중력 
-    public float gravity = 300.0f;
-
     [SerializeField] private float downWalkSpeed = 2.0f;
     [SerializeField] private float slowWalkSpeed = 3.0f;
     [SerializeField] private float walkSpeed = 5.0f;
@@ -65,6 +62,7 @@ public class csPlayerCtrl : MonoBehaviour
     private bool isFind = false;
     private bool isPickup = false;
     private bool isStop = false;
+    private bool isObserve = false;
 
     //Raycast를 위한 변수
     private Ray ray;
@@ -77,9 +75,15 @@ public class csPlayerCtrl : MonoBehaviour
     private Image imgMap;
     private RectTransform rectrPlayerDot;
     public Sprite[] sprMap;
+    private Text txtMap;
 
     // 자신의 Transform 간단하게 쓰기위해 선언
     private Transform mytr;
+
+    //옵저버용 카메라
+    private Transform observeCamera;
+    private GameObject[] observeTarget = { null, null };
+    Quaternion cameraRot;
 
     void Awake()
     {
@@ -88,6 +92,7 @@ public class csPlayerCtrl : MonoBehaviour
         controller = GetComponent<CharacterController>();
         currPos = transform.position;
         currRot = transform.rotation;
+        observeCamera = transform.Find("ObserveCamera");
         StartCoroutine(this.ActivePlayer());
 
         if (pv.isMine)
@@ -95,10 +100,10 @@ public class csPlayerCtrl : MonoBehaviour
             TrigPopup = transform.Find("Player_FP").Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
             txtPopup = TrigPopup.transform.Find("txtObjectName").GetComponent<Text>();
             imgMap = transform.Find("Player_FP").Find("Canvas_User_UI").Find("Minimap").Find("imgMap").GetComponent<Image>();
+            txtMap = transform.Find("Player_FP").Find("Canvas_User_UI").Find("Minimap").Find("imgMap").Find("txtMap").GetComponent<Text>();
             rectrPlayerDot = imgMap.transform.Find("PlayerDot").GetComponent<RectTransform>();
             mytr = GetComponent<Transform>();
         }
-
     }
 
     // Start is called before the first frame update
@@ -112,29 +117,50 @@ public class csPlayerCtrl : MonoBehaviour
             m_CharacterTargetRot = transform.localRotation;
             m_CameraTargetRot = playerCamera.localRotation;
         }
-
-        movSpeed = 3.0f;
-        downWalkSpeed = 1.0f;
-        slowWalkSpeed = 1.5f;
-        walkSpeed = 3.0f;
-        runSpeed = 4.0f;
-        hor = 0;
-        ver = 0;
-        movSpeed = walkSpeed;
     }
     // Update is called once per frame
     void Update()
     {
-        //죽으면 Update 함수 실행 종료 추후 변경될 수 있음. + Coroutine까지 종료하거나 없애거나?
+        //죽으면 Update 함수 실행 종료 + 관전모드 활성화
         if (isDie)
         {
+            if (pv.isMine)
+            {
+                CharacterState();
+                if (isObserve && Input.GetMouseButtonDown(0))
+                {
+                    //다른 플레이어 관전으로 바꾸는 행위. // Setactive false + camera OnOff
+                    if (!observeTarget[0].transform.Find("ObserveCamera").gameObject.activeSelf)
+                    {
+                        observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(true);
+                        observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(false);
+                        observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
+                        observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(true);
+                        observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(false);
+                        observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(false);
+                        observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(true);
+                    }
+                }
+            }
+            else
+            {
+                PlayerAnimState();
+            }
+            MouseOnOff();
             return;
-            //StopAllCoroutines();
         }
 
-        //내부적으로 isMine 선언되어 있음
-        CharacterMove();
-        CharacterView();
+        if (!isStop)
+        {
+            //내부적으로 isMine 선언되어 있음
+            CharacterMove();
+            CharacterView();
+        }
+
         MouseOnOff();
 
         if (pv.isMine)
@@ -147,16 +173,46 @@ public class csPlayerCtrl : MonoBehaviour
             MinimapUpdate();
             //Raycast 트리거
             PlayerRaycast();
+
+
         }
         //레이캐스트로 상호작용 오브젝트 판별
         else
         {
             PlayerAnimState();
         }
+        //옵저버카메라 위치 동기화
+        ObserveCamera();
+    }
+    [PunRPC]
+    void ObserveCamera()
+    {
+        //OnPhotonSerializeView 에서 cameraRot값 넘겨준걸로 카메라 회전 값 동기화 // 살짝 끊기는 감이 없잖아 있음.
+        if (pv.isMine)
+        {
+            cameraRot = playerCamera.localRotation;
+        }
+        observeCamera.localRotation = Quaternion.Lerp(observeCamera.localRotation, new Quaternion(cameraRot.x, observeCamera.localRotation.y, observeCamera.localRotation.z, observeCamera.localRotation.w), Time.deltaTime * 15.0f);
+
     }
     void MinimapUpdate()
     {
         rectrPlayerDot.anchoredPosition = new Vector2((mytr.position.x * 4.106f) + 66.8f, (mytr.position.z * 4.172f) + 78.5f);
+        if (transform.position.y > 0.78f)
+        {
+            txtMap.text = "3층";
+            imgMap.sprite = sprMap[2];
+        }
+        else if (transform.position.y > -3.4f)
+        {
+            txtMap.text = "2층";
+            imgMap.sprite = sprMap[1];
+        }
+        else
+        {
+            txtMap.text = "1층";
+            imgMap.sprite = sprMap[0];
+        }
     }
     //레이캐스트
     void PlayerRaycast()
@@ -318,6 +374,9 @@ public class csPlayerCtrl : MonoBehaviour
     {
         switch ((State)playerNetAnim)
         {
+            case State.DIE:
+                anim.Play("Die");
+                break;
             case State.IDLE:
                 anim.Play("Idle");
                 break;
@@ -336,8 +395,8 @@ public class csPlayerCtrl : MonoBehaviour
             case State.WALK:
                 anim.Play("Walk");
                 break;
-            case State.DIE:
-                anim.Play("Die");
+            default:
+                anim.Play("Idle");
                 break;
         }
     }
@@ -493,16 +552,15 @@ public class csPlayerCtrl : MonoBehaviour
             hor = Input.GetAxisRaw("Horizontal");
             ver = Input.GetAxisRaw("Vertical");
 
-            moveDirection = Vector3.Normalize(new Vector3(hor, 0, ver)) * movSpeed;
+            //떠있을 때 중력적용
+            if (controller.isGrounded) moveDirection = Vector3.Normalize(new Vector3(hor, 0, ver)) * movSpeed;
+            else moveDirection = Vector3.Normalize(new Vector3(hor, -2, ver)) * movSpeed;
 
             // transform.TransformDirection 함수는 인자로 전달된 벡터를 
             // 월드좌표계 기준으로 변환하여 변환된 벡터를 반환해 준다.
             //즉, 로컬좌표계 기준의 방향벡터를 > 월드좌표계 기준의 방향벡터로 변환
             moveDirection = transform.TransformDirection(moveDirection);
 
-
-            // 디바이스마다 일정 속도로 케릭에 중력 적용
-            moveDirection.y -= gravity * Time.deltaTime;
             // CharacterController의 Move 함수에 방향과 크기의 벡터값을 적용(디바이스마다 일정)
             controller.Move(moveDirection * Time.deltaTime);
             #endregion
@@ -524,12 +582,14 @@ public class csPlayerCtrl : MonoBehaviour
             stream.SendNext(transform.position);
             stream.SendNext(transform.rotation);
             stream.SendNext(playerNetAnim);
+            stream.SendNext(cameraRot);
         }
         else
         {
             currPos = (Vector3)stream.ReceiveNext();
             currRot = (Quaternion)stream.ReceiveNext();
             playerNetAnim = (int)stream.ReceiveNext();
+            cameraRot = (Quaternion)stream.ReceiveNext();
         }
     }
 
@@ -551,18 +611,62 @@ public class csPlayerCtrl : MonoBehaviour
         return q;
     }
 
+
+    //죽었을 때 코루틴으로 DieAction 쏴줌.
+    [ContextMenu("DieTest")]
     public void Die()
     {
+        StartCoroutine("DieAction");
+    }
+    public IEnumerator DieAction()
+    {
         isDie = true;
+
+        if (pv.isMine)
+        {
+            //비디오 재생 스크립트 넣어야함
+
+            //비디오 재생 후 다른 상대 카메라 On 시킬 예정 시간은 변경 예정
+            yield return new WaitForSeconds(5f);
+
+            //관전으로 넘어가는 부분
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (gameObject.name != players[i].name)
+                {
+                    if (observeTarget[0] == null)
+                    {
+                        observeTarget[0] = players[i];
+                    }
+                    else
+                    {
+                        observeTarget[1] = players[i];
+                    }
+                }
+            }
+            observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
+            transform.Find("Player_FP").gameObject.SetActive(false);
+            observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
+            isObserve = true;
+        }
+        else
+        {
+            yield return new WaitForSeconds(5f);
+            //애니메이션 x초 이후 캐릭터 없애야함
+            transform.Find("Player_TP").gameObject.SetActive(false);
+        }
     }
 
     public void PianoDie(Transform enemyTr)
     {
-        isStop = true;
-        transform.LookAt(enemyTr);
-
+        if (pv.isMine)
+        {
+            isStop = true;
+            playerCamera.LookAt(enemyTr);
+        }
+        Die();
     }
-
 }
 
 

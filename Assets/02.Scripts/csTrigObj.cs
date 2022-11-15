@@ -14,7 +14,6 @@ public class csTrigObj : MonoBehaviour
         anim = GetComponent<Animator>();
         if(gameObject.tag=="Chair"|| gameObject.tag =="OfficeChair")
         {
-            pv.ObservedComponents.RemoveAt(0);
             pv.ObservedComponents.Add(transform);
         }
     }

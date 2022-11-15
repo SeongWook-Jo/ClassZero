@@ -56,4 +56,6 @@ MonoBehaviour:
   - DoorAnim
   - LightAnim
   - ChairAnim
+  - PianoDie
+  - ObserveCamera
   DisableAutoOpenWizard: 1

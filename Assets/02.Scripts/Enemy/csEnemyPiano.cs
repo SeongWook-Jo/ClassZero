@@ -10,7 +10,7 @@ public class csEnemyPiano : MonoBehaviour
     private AudioSource audio;
     //노래 재생 변수
     public bool isPlay;
-    private GameObject[] killPlayers;
+    public GameObject[] killPlayers;
     private Transform pianoChair;
     private Animator anim;
     private PhotonView pv;
@@ -19,7 +19,6 @@ public class csEnemyPiano : MonoBehaviour
     private void Awake()
     {
         audio = GetComponent<AudioSource>();
-        killPlayers = GetComponentInChildren<csPianoKillCk>().players;
         pianoChair = GameObject.Find("props_149").GetComponent<Transform>();
         anim = GetComponentInChildren<Animator>();
         pv = GetComponent<PhotonView>();
@@ -51,16 +50,19 @@ public class csEnemyPiano : MonoBehaviour
     [ContextMenu("pkTest")]
     void PianoKill()
     {
+        killPlayers = GetComponentInChildren<csPianoKillCk>().players;
         for (int i = 0; i < killPlayers.Length; i++)
         {
             if (killPlayers[i] != null)
-
+            {
                 killPlayers[i].GetComponent<csPlayerCtrl>().PianoDie(transform);
+            }
         }
-
         //플레이어와 의자를 자연스럽게 뒤로 밀면서 애니메이션 재생할예정 3초뒤 앞으로 오는 모션도 포함
         StartCoroutine("Move");
         anim.SetTrigger("Kill");
+        //모두 죽인 뒤 초기화,,
+        //killPlayers.Initialize();
     }
 
     //의자랑 캐릭터 움직이는 스크립트
@@ -78,7 +80,7 @@ public class csEnemyPiano : MonoBehaviour
         }
         //4초 후 처음위치로 다시 이동
         yield return new WaitForSeconds(4.0f);
-        while (transform.localPosition.x > currEnemyPo.x || pianoChair.localPosition.z > currChairPo.z )
+        while (transform.localPosition.x > currEnemyPo.x || pianoChair.localPosition.z > currChairPo.z)
         {
             if (transform.localPosition.x > currEnemyPo.x) transform.localPosition -= new Vector3(0.011f, 0, 0);
             if (pianoChair.localPosition.z > currChairPo.z) pianoChair.localPosition -= new Vector3(0, 0, 0.008f);
@@ -140,4 +142,9 @@ public class csEnemyPiano : MonoBehaviour
         StopCoroutine("PlayRoutine");
     }
 
+    //인터페이스에 의해 구현은 해야한다.
+    void OnPhotonSerializeView(PhotonStream stream,PhotonMessageInfo info)
+    {
+
+    }
 }

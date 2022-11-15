@@ -18,6 +18,7 @@ public class csPianoKillCk : MonoBehaviour
                 if(players[i] == null)
                 {
                     players[i] = other.gameObject;
+                    break; 
                 }
             }
         }

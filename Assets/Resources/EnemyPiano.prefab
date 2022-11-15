@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 8878337848251531254}
   - component: {fileID: 8878337848251531249}
   - component: {fileID: 8878337848251531248}
-  - component: {fileID: 8878337848251531251}
+  - component: {fileID: 5788434352570769136}
   m_Layer: 0
   m_Name: EnemyPiano
   m_TagString: Untagged
@@ -222,6 +222,7 @@ MonoBehaviour:
   playerCount: 0
   pauseTime: 5
   isPlay: 0
+  killPlayers: []
 --- !u!82 &8878337848251531254
 AudioSource:
   m_ObjectHideFlags: 0
@@ -367,8 +368,8 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!136 &8878337848251531251
-CapsuleCollider:
+--- !u!65 &5788434352570769136
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -377,10 +378,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.20281355
-  m_Height: 1.5345206
-  m_Direction: 1
-  m_Center: {x: -0.016723543, y: 0.7415062, z: -1.5611294e-17}
+  serializedVersion: 2
+  m_Size: {x: 1.3043345, y: 1.5987215, z: 0.63787246}
+  m_Center: {x: 0.015171707, y: 0.78972495, z: 0.009273484}
 --- !u!1001 &8534223505380071961
 PrefabInstance:
   m_ObjectHideFlags: 0
