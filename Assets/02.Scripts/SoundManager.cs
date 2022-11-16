@@ -7,12 +7,17 @@ using UnityEngine.UI;
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
-    public AudioClip[] soundFile; //오디오 클립 저장 배열 
-
+    private PhotonView pv;
+    public AudioClip[] UIsoundFile; //UI용 오디오 클립 저장 배열
+    public AudioClip[] PlayerSoundFile;//플레이어 오디오클립
+    public AudioClip[] GhostSoundFile;//고스트 오디오클립
+    public AudioClip[] ObjectSoundFile;//사물 오디오클립
+    public AudioClip[] BGMSoundFile;//배경음악 오디오클립
+    private AudioSource[] audioSources = new AudioSource[4];
     public float soundVolume = 1.0f;  // 사운드 볼륨 설정 변수
     public bool isSoundMute = false;  // 사운드 뮤트 설정 변수
-
-    public Slider bgm_sl;   
+    public Slider bgm_sl;
+   
     //public Slider sEffect_sl;
 
     public Toggle bgm_tg;
@@ -21,24 +26,34 @@ public class SoundManager : MonoBehaviour
     public GameObject Sound;  // Sound 오브젝트 연결
     //public GameObject PlaySoundBtn; //Sound ui 버튼 추후 ESC 버튼 연결?
 
-    private AudioSource audio;  //오디오 소스의 사용 처음에 public / private
+    private AudioSource UIaudio;  //오디오 소스의 사용 처음에 public / private 
 
     private void Awake()
     {
-        audio = GetComponent<AudioSource>();
+        pv = GetComponent<PhotonView>();
+        UIaudio = GetComponent<AudioSource>();
+        //사운드매니저 게임오브젝트에 사운드리소스를 여러개 추가해서 관리 할것임
+        for(int i = 0;i<4;i++) //3개추가하겠다
+        {
+            audioSources[i] = gameObject.AddComponent<AudioSource>() as AudioSource;
+            //UIaudio = ui사운드,[0] = 플레이어사운드,[1] = 고스트사운드,[2] = 배경음악,[3] = 사물사운드
+            //uiaudio때문에 제대로 적용 안됌 -1 로 계산해서 스크립트 짤것
+        }
         //DontDestroyOnLoad(this.gameObject);  ////씬이 넘어가도 이 오브젝트를 계속 가져감
-
+       
+        
         LoadData();  // 게임 로드(사운드 셋팅 저장된 값을 불러옴)
     }
 
     void Start()
     {
+        audioSources[2].clip = BGMSoundFile[0];
+        audioSources[2].loop = true; //배경음악은 계속 실행해야하니까.. 루프..
+        audioSources[2].Play();
         soundVolume = bgm_sl.value;
         //soundVolume = sEffect_sl.value;
-
         isSoundMute = bgm_tg.isOn; // 뮤트 토글박스에 체크표시가 되어야 Mute
         //isSoundMute = sEffect_tg.isOn;
-
         //PlaySoundBtn.SetActive(true);  //오픈 씬에서 비활, 누르면 활성화
 
         AudioSet();
@@ -49,6 +64,11 @@ public class SoundManager : MonoBehaviour
     //호출시 초기화
     public void SetSound()
     {
+    
+        //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
+        UIaudio.clip = UIsoundFile[1];
+        //실행
+        UIaudio.Play();
         soundVolume = bgm_sl.value;
         //soundVolume = sEffect_sl.value;
 
@@ -61,8 +81,19 @@ public class SoundManager : MonoBehaviour
 
     void AudioSet()
     {
-        audio.volume = soundVolume; // audioSource의 볼륨 셋팅
-        audio.mute = isSoundMute;   // audioSource의 Mute 셋팅
+        UIaudio.volume = soundVolume; // audioSource의 볼륨 셋팅
+        for(int i =0;i<3; i++) //사운드리소스 3개 했으니 3개를 뮤트해야함
+        {
+          audioSources[i].volume = soundVolume;
+        }
+       
+        
+        UIaudio.mute = isSoundMute;   // audioSource의 Mute 셋팅
+        for (int i = 0; i < 3; i++)
+        {
+            audioSources[i].mute = isSoundMute;
+        }
+
     }
 
     //버튼 연결
@@ -75,6 +106,13 @@ public class SoundManager : MonoBehaviour
 
     public void OnClickSoundUi_Close()
     {
+        ///////////////////////////
+        //버튼 onClick에 사운드매니저 있는데 사운드매니저에 ui 가있음 동일한 스크립트 두개는 못 넣나봄
+        //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
+        UIaudio.clip = UIsoundFile[0];
+        //소리를 1 회 실행(but 오디오소스에 loop가 체크 되어있으면 반복재생함,뮤트가체크되어있다면?)
+        UIaudio.Play();
+        /////////////////////////////
         Sound.SetActive(false);
         //PlaySoundBtn.SetActive(true);
 
@@ -87,44 +125,17 @@ public class SoundManager : MonoBehaviour
     {
         //audioSource 사운드 연결
         //GetComponent<AudioSource>().clip = soundFile[stage - 1];
-        audio.clip = soundFile[stage - 2]; // soundFile 배열에 받은 audioclip의 두번째를 재생. 1번은 StartBGM 2번 PlayBGM
+        UIaudio.clip = UIsoundFile[stage - 2]; // soundFile 배열에 받은 audioclip의 두번째를 재생. 1번은 StartBGM 2번 PlayBGM
 
-        //audiosource 셋팅
+        //audiosource 셋팅//?? 볼륨조절함수가 셋팅?? 위에꺼가 셋팅이 아닌지?
         AudioSet();
 
         //사운드 플레이 Mute설정시 사운드 안나옴
         //GetComponent<AudioSource>().Play();
-        audio.Play();
+        UIaudio.Play();
 
     }
 
-    //// 가까이가면 소리 커지고 멀어지면 작아짐..
-    //public void PlayEffect(Vector3 pos, AudioClip sfx)
-    //{
-    //    // Mute 옵션 설정시 이 함수를 바로 빠져 나감. 음소거
-    //    if(isSoundMute)
-    //    {
-    //        return;
-    //    }
-
-    //    GameObject _soundObj = new GameObject("sfx");
-    //    _soundObj.transform.position = pos; //사운드 발생 위치 지정
-
-    //    //생성한 게임오브젝트에 audioSource 컴퍼넌트 추가
-    //    AudioSource _audioSource = _soundObj.AddComponent<AudioSource>();
-
-    //    //Audiosource 속성 설정
-    //    _audioSource.clip = sfx; // 사운드 파일 연결
-    //    _audioSource.volume = soundVolume; // 설정되어있는 볼륨 적용 / soundVolume으로 게임 전체 사운드 볼륨 조절
-    //    _audioSource.minDistance = 15.0f;  //사운드 3d 셋팅에 최소 범위 설정
-    //    _audioSource.maxDistance = 30.0f;  //사운드 3d 셋팅에 최대 범위 설정
-
-    //    _audioSource.Play();    // 사운드 실행
-
-    //    Destroy(_soundObj, sfx.length + 0.2f);  //모든 사운드가 플레이 종료되면 동적생성 게임오브젝트 삭제
-    //}
-
-    // 게임 사운드의 볼륨, 뮤트 값등 정보 저장
     public void SaveData()
     {
         PlayerPrefs.SetFloat("SOUNDVOLUME", soundVolume);
@@ -160,10 +171,87 @@ public class SoundManager : MonoBehaviour
         }
             
     }
-
-
+    /* 
+     audio.volume = n 사운드크기조절 최대 1.0f
+     */
+    public void UICloseSound()
+    {
+        //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
+        UIaudio.clip = UIsoundFile[0];
+        //소리를 1 회 실행(but 오디오소스에 loop가 체크 되어있으면 반복재생함,뮤트가체크되어있다면?)
+        UIaudio.Play();
+    }
+    public void UIOpenSound()
+    {
+        UIaudio.clip = UIsoundFile[2];
+        UIaudio.Play();
+    }
+    public void UIReadySound()
+    {
+        UIaudio.clip = UIsoundFile[3];
+        UIaudio.Play();
+    }
+    public void UIStartSound()
+    {
+        UIaudio.clip = UIsoundFile[4];
+        UIaudio.Play();
+    }
+    public void UIBackSound()
+    {
+        UIaudio.clip = UIsoundFile[5];
+        UIaudio.Play();
+    }
+    public void LobbyBGM()
+    {
+        audioSources[2].clip = BGMSoundFile[1];
+        audioSources[2].Play();
+    }
+   public void BackLobbyBGM()
+    {
+        audioSources[2].clip = BGMSoundFile[0];
+        audioSources[2].Play();
+    }
+    //포톤
+    public void AllUesrInGameBGMStart()
+    {
+            pv.RPC("INGameBGM", PhotonTargets.All);
+    }
+    
+    [PunRPC]
+    public void INGameBGM()
+    {
+        audioSources[2].clip = BGMSoundFile[2];
+        audioSources[2].Play();
+        
+    }
 
 
 
 }
+//// 가까이가면 소리 커지고 멀어지면 작아짐..
+//public void PlayEffect(Vector3 pos, AudioClip sfx)
+//{
+//    // Mute 옵션 설정시 이 함수를 바로 빠져 나감. 음소거
+//    if(isSoundMute)
+//    {
+//        return;
+//    }
 
+//    GameObject _soundObj = new GameObject("sfx");
+//    _soundObj.transform.position = pos; //사운드 발생 위치 지정
+
+//    //생성한 게임오브젝트에 audioSource 컴퍼넌트 추가
+//    AudioSource _audioSource = _soundObj.AddComponent<AudioSource>();
+
+//    //Audiosource 속성 설정
+//    _audioSource.clip = sfx; // 사운드 파일 연결
+//    _audioSource.volume = soundVolume; // 설정되어있는 볼륨 적용 / soundVolume으로 게임 전체 사운드 볼륨 조절
+//    _audioSource.minDistance = 15.0f;  //사운드 3d 셋팅에 최소 범위 설정
+//    _audioSource.maxDistance = 30.0f;  //사운드 3d 셋팅에 최대 범위 설정
+
+//    _audioSource.Play();    // 사운드 실행
+
+//    Destroy(_soundObj, sfx.length + 0.2f);  //모든 사운드가 플레이 종료되면 동적생성 게임오브젝트 삭제
+//}
+
+// 게임 사운드의 볼륨, 뮤트 값등 정보 저장

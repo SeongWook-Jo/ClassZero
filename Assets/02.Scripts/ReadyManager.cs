@@ -23,6 +23,7 @@ public class ReadyManager : MonoBehaviour
     public Text chatLog;
     public Text msg;
     public InputField intput;
+    private GameObject SoundManager;
     ScrollRect scroll_rect = null;
     //chat을 위한 변수 선언
     //public Text chatLog;
@@ -32,17 +33,18 @@ public class ReadyManager : MonoBehaviour
     public InputField chatMsg;  // 메시지 받고
     public Text txtChatMsg; // 메시지 표시하고
 
-
+    private int i=0;//레디 확인용 변수
     void Awake()
     {
         PhotonNetwork.isMessageQueueRunning = true; // 보내는걸 멈춰놨던 메세지 다시 true 해줌
-
+       
         pv = GetComponent<PhotonView>(); // PhotonView 사용을 위해 pv를 가져온다,,
         PhotonNetwork.automaticallySyncScene = true;
     }
 
     void Start()
     {
+        SoundManager = GameObject.Find("SoundManager");
         {
             playerNumber[PhotonNetwork.player.ID] = 0;
             playerReady[0] = false;
@@ -61,7 +63,7 @@ public class ReadyManager : MonoBehaviour
             PR[2] = (bool)playerReady[2];
         if (PR[0] && PR[1] && PR[2])
         {
-
+            PR[0] = (bool)playerReady[0];
             StartBtn.SetActive(true);
 
         }
@@ -80,17 +82,18 @@ public class ReadyManager : MonoBehaviour
     {
         // "안의 캔버스 컴포넌트 비활성화"
         //GameObject.Find("").GetComponent<Canvas>().enabled = false;
-
+        SoundManager.GetComponent<SoundManager>().UIBackSound();
+        SoundManager.GetComponent<SoundManager>().BackLobbyBGM();
         SceneManager.LoadScene("scNetLobby");
 
         PhotonNetwork.LeaveRoom();
     }
 
-
+    //신경안써도 되는 함수..라고합니다
     public void OnClickSet()  // set(sound)..
     {
         SoundManager soundmanager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-        soundmanager.OnClickSoundUi_Close();
+        soundmanager.UIOpenSound();
 
     }
 
@@ -117,8 +120,21 @@ public class ReadyManager : MonoBehaviour
 
     public void OnClickReady() // 버튼 누르면 MasterClient에게 player.ID 보내주고
     {
-
         pv.RPC("Ready", PhotonTargets.MasterClient, PhotonNetwork.player.ID);
+        if (i==0)
+        {
+            //사운드가커서 소리를 일단 줄이고..
+            //SoundManager.GetComponent<SoundManager>().soundVolume = 0.5f;
+            //사운드 실행
+            SoundManager.GetComponent<SoundManager>().UIReadySound();
+            //레디확인을 위한 인트변수
+            i++;
+        }
+        else
+        {
+            i--;
+        }
+         
 
     }
 
@@ -136,7 +152,9 @@ public class ReadyManager : MonoBehaviour
         PhotonPlayer[] players =  PhotonNetwork.playerList;
         //Key, Value 저장을 위한 해쉬테이블 생성 해쉬테이블 배열로 했으나 NullReference로 인해서 변수 한개로 생성
         Hashtable playerOpth = new Hashtable();
-        for(int i = 0;i<PhotonNetwork.room.PlayerCount; i++)
+        //찾아준 사운드매니저 오브젝트의 함수을 실행해줍니다.
+        SoundManager.GetComponent<SoundManager>().UIStartSound();//방장이 눌렀으니 방장에게만 들려야할까?
+        for (int i = 0;i<PhotonNetwork.room.PlayerCount; i++)
         {
             //배정된 위치를 할당해줌 PR[x] 
             playerOpth.Add("NumberInRoom", playerNumber[players[i].ID]);
@@ -147,6 +165,7 @@ public class ReadyManager : MonoBehaviour
         }
 
         //PhotonNetwork.automaticallySyncScene; 어디?
+        SoundManager.GetComponent<SoundManager>().AllUesrInGameBGMStart();
         PhotonNetwork.LoadLevel("scNetInGame");
 
         //SceneManager.LoadScene("scNetInGame");

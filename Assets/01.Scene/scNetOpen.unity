@@ -27,18 +27,18 @@ RenderSettings:
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
-  m_HaloStrength: 0.5
-  m_FlareStrength: 1
+  m_HaloStrength: 0.305
+  m_FlareStrength: 0.673
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
   m_DefaultReflectionMode: 0
-  m_DefaultReflectionResolution: 128
+  m_DefaultReflectionResolution: 64
   m_ReflectionBounces: 1
-  m_ReflectionIntensity: 1
+  m_ReflectionIntensity: 0.512
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.26891264, g: 0.2746782, b: 0.25802317, a: 0.512}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2690,6 +2690,7 @@ GameObject:
   - component: {fileID: 1879941823}
   - component: {fileID: 1879941822}
   - component: {fileID: 1879941821}
+  - component: {fileID: 1879941824}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -2721,11 +2722,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 425426fc2306a344c94eafa8cc9f5ec8, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -2831,11 +2832,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79159bda815cc346bb4731e7a0da7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundFile:
+  PR: 000000
+  UIsoundFile:
+  - {fileID: 8300000, guid: 21a831c63289d1e49ab559b3d5e9a88d, type: 3}
+  - {fileID: 8300000, guid: 5214d07086a35af4f86bf570dce126cb, type: 3}
+  - {fileID: 8300000, guid: 74a0f283e4e4c514d871a8dfc2d806f5, type: 3}
+  - {fileID: 8300000, guid: 4e625d8047af34a42be972371406c50a, type: 3}
+  - {fileID: 8300000, guid: 7f188c2a787b5dd42b5f950715a63b6e, type: 3}
+  - {fileID: 8300000, guid: 29175862baba0024e9a7e3052cd851bf, type: 3}
+  PlayerSoundFile: []
+  GhostSoundFile: []
+  ObjectSoundFile: []
+  BGMSoundFile:
   - {fileID: 8300000, guid: 425426fc2306a344c94eafa8cc9f5ec8, type: 3}
+  - {fileID: 8300000, guid: 4b94fd59f58781e458ac48d46f30ddf7, type: 3}
   - {fileID: 8300000, guid: 29fe1cac0e443164a9edebeeda4894c2, type: 3}
   soundVolume: 1
   isSoundMute: 0
   bgm_sl: {fileID: 1583192935}
   bgm_tg: {fileID: 1114607175}
   Sound: {fileID: 882864275}
+--- !u!114 &1879941824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1879941819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  synchronization: 0
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 999
+  instantiationId: 999
+  currentMasterID: -1
+  isRuntimeInstantiated: 0

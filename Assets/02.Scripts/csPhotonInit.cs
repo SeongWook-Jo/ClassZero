@@ -288,7 +288,7 @@ using UnityEngine.SceneManagement;
 public class csPhotonInit : MonoBehaviour
 {
     public string version = "Ver 0.1.0";
-
+    private GameObject SoundManager;
     public PhotonLogLevel logLevel = PhotonLogLevel.Full;
 
     //public InputField userId;
@@ -303,6 +303,8 @@ public class csPhotonInit : MonoBehaviour
 
     void Awake()
     {
+        //다른 씬에있는 사운드매니저오브젝트를 찾아줍니다.
+        SoundManager = GameObject.Find("SoundManager");
         if (!PhotonNetwork.connected)
         {
             PhotonNetwork.ConnectUsingSettings(version);  // 같은 버전만 만남
@@ -357,7 +359,7 @@ public class csPhotonInit : MonoBehaviour
     void OnJoinedRoom()
     {
         Debug.Log("Enter Room");
-
+       
         StartCoroutine(this.LoadStage());
     }
 
@@ -367,7 +369,7 @@ public class csPhotonInit : MonoBehaviour
         PhotonNetwork.isMessageQueueRunning = false;
 
         AsyncOperation ao = SceneManager.LoadSceneAsync("scNetReady");
-
+        
         yield return ao;
 
         Debug.Log("로딩 완료");
@@ -436,7 +438,7 @@ public class csPhotonInit : MonoBehaviour
     void OnClickRoomItem(string roomName)
     {
         //PhotonNetwork.player.NickName = userId.text;
-
+        SoundManager.GetComponent<SoundManager>().LobbyBGM();//OnJoinedRoom함수에 넣으니 최초 1회만 실행하고 방을 나가고 다시 들어올시에는 실행이 안되었음
         PhotonNetwork.JoinRoom(roomName);
     }
 

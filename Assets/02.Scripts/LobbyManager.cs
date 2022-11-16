@@ -8,9 +8,31 @@ public class LobbyManager : MonoBehaviour
     public GameObject lobbyInfo_; // 게임설명
     public GameObject lobbyRoom_; // 방 목록
     public GameObject lobbyCredit_;
-
+    private GameObject SoundManager;
     public GameObject[] lobbyBtn;  // 로비 화면 버튼들 참조 배열 
-
+    
+    private void Start()
+    {
+        //다른 씬에있는 사운드매니저오브젝트를 찾아줍니다.
+        SoundManager =GameObject.Find("SoundManager");
+    }
+    public void UIOpenSound()
+    {
+        //찾아준 사운드매니저 오브젝트의 함수을 실행해줍니다.
+        SoundManager.GetComponent<SoundManager>().UIOpenSound();
+    }
+    public void UICloseSound()
+    {
+        SoundManager.GetComponent<SoundManager>().UICloseSound();
+    }
+    public void UIBackSound()
+    {
+        SoundManager.GetComponent<SoundManager>().UIBackSound();
+    }
+    public void BGMLobby()
+    {
+        SoundManager.GetComponent<SoundManager>().LobbyBGM();
+    }
     public void lobbySet_Open()
     {
         //lobbyBtn[0].SetActive(false); // 1.버튼 누르면 로비에 있는 버튼 비활성화시킴
