@@ -173,8 +173,8 @@ public class csPlayerCtrl : MonoBehaviour
             MinimapUpdate();
             //Raycast 트리거
             PlayerRaycast();
-
-
+            //Y값에 따라서 다른 사운드 Off
+            SoundOnOff();
         }
         //레이캐스트로 상호작용 오브젝트 판별
         else
@@ -195,6 +195,23 @@ public class csPlayerCtrl : MonoBehaviour
         observeCamera.localRotation = Quaternion.Lerp(observeCamera.localRotation, new Quaternion(cameraRot.x, observeCamera.localRotation.y, observeCamera.localRotation.z, observeCamera.localRotation.w), Time.deltaTime * 15.0f);
 
     }
+
+    void SoundOnOff()
+    {
+        AudioSource[] audioSetting = GameObject.FindObjectsOfType<AudioSource>();
+        foreach(AudioSource a in audioSetting)
+        {
+            if(Mathf.Abs(a.transform.position.y - transform.position.y) > 1f )
+            {
+                a.enabled = false;
+            }
+            else
+            {
+                a.enabled = true;
+            }
+        }
+    }
+
     void MinimapUpdate()
     {
         rectrPlayerDot.anchoredPosition = new Vector2((mytr.position.x * 4.106f) + 66.8f, (mytr.position.z * 4.172f) + 78.5f);
