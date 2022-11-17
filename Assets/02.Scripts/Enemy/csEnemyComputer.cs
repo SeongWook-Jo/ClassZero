@@ -41,11 +41,15 @@ public class csEnemyComputer : MonoBehaviour
             StartCoroutine("ScreenOnOff");
             StartCoroutine("SoundOnOff");
         }
-
+        //플레이어 없을 때
         if (playerCount == 0)
         {
             StopAllCoroutines();
             isPlay = false;
+            foreach (MeshRenderer m in screenQuad)
+            {
+                m.enabled = false;
+            }
         }
 
         //진입하고 40초 이후에 사망
@@ -54,19 +58,20 @@ public class csEnemyComputer : MonoBehaviour
             ComputerKill();
         }
     }
+
+    //PlayerKill 함수
     void ComputerKill()
     {
+        //죽인 뒤 초기화
         for (int i = 0; i < players.Length; i++)
         {
-            if (players[i] != null) players[i].GetComponent<csPlayerCtrl>().Die();
+            if (players[i] != null)
+            {
+                players[i].GetComponent<csPlayerCtrl>().Die();
+                players[i] = null;
+            }
         }
-        StopAllCoroutines();
-        isPlay = false;
         playerCount = 0;
-        for (int i = 0; i < players.Length; i++)
-        {
-            players[i] = null;
-        }
     }
 
     //스크린 온 오프 1초 기준
@@ -94,6 +99,8 @@ public class csEnemyComputer : MonoBehaviour
             yield return new WaitForSeconds(3.0f);
         }
     }
+
+    //플레이어 들어올 때 카운트 체크 및 배열에 넣어서 나중에 Kill할때 사용
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
@@ -109,6 +116,7 @@ public class csEnemyComputer : MonoBehaviour
             }
         }
     }
+    //플레이어 나갈 때 카운트 체크
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Player")
@@ -123,5 +131,9 @@ public class csEnemyComputer : MonoBehaviour
                 }
             }
         }
+    }
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+
     }
 }

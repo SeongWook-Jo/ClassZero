@@ -615,12 +615,17 @@ public class csPlayerCtrl : MonoBehaviour
     public void Die()
     {
         Debug.Log("죽음실행");
+        pv.RPC("NetDie", PhotonTargets.All);
+    }
+    [PunRPC]
+    void NetDie()
+    {
         StartCoroutine("DieAction");
     }
     public IEnumerator DieAction()
     {
         isDie = true;
-
+        gameObject.tag = "Untagged";
         if (pv.isMine)
         {
             //비디오 재생 스크립트 넣어야함

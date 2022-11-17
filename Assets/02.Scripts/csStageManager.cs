@@ -7,6 +7,9 @@ public class csStageManager : MonoBehaviour
 {
     public Transform[] playerSpawners;
     private Transform pianoSpawner;
+    private Transform computerSpawner;
+    private Transform patrolOneSpawner;
+    private Transform patrolTwoSpawner;
     private int count;
     Room room;
     PhotonView pv;
@@ -19,14 +22,15 @@ public class csStageManager : MonoBehaviour
         //GetComponentsInChildren은 부모객체부터 가져와서 1~3의 숫자로 할당해야함
         playerSpawners = GameObject.Find("PlayerSpawner").GetComponentsInChildren<Transform>();
         pianoSpawner = GameObject.Find("PianoSpwn").GetComponent<Transform>();
-
+        computerSpawner = GameObject.Find("ComputerSpwn").GetComponent<Transform>();
+        patrolOneSpawner = GameObject.Find("PatrolOneSpwn").GetComponent<Transform>();
+        patrolTwoSpawner = GameObject.Find("PatrolTwoSpwn").GetComponent<Transform>();
     }
     // Start is called before the first frame update
     void Start()
     {
-        PhotonPlayer[] players = PhotonNetwork.playerList;
         //캐릭터 생성 코루틴 실행
-        StartCoroutine(this.CreatePlayer());
+        StartCoroutine(CreatePlayer());
         StartCoroutine(CreateEnemy());
     }
 
@@ -59,7 +63,12 @@ public class csStageManager : MonoBehaviour
     }
     IEnumerator CreateEnemy()
     {
+        //yield return new WaitForSeconds(1f);
         PhotonNetwork.InstantiateSceneObject("EnemyPiano", pianoSpawner.position, pianoSpawner.rotation, 0, null);
+        PhotonNetwork.InstantiateSceneObject("EnemyComputer", computerSpawner.position, computerSpawner.rotation, 0, null);
+        PhotonNetwork.InstantiateSceneObject("EnemyPatrolOne", patrolOneSpawner.position, patrolOneSpawner.rotation, 0, null);
+        PhotonNetwork.InstantiateSceneObject("EnemyPatrolTwo", patrolTwoSpawner.position, patrolTwoSpawner.rotation, 0, null);
+
         yield return null;
     }
 }

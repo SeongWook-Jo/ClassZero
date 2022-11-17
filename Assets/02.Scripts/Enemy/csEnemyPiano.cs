@@ -14,6 +14,7 @@ public class csEnemyPiano : MonoBehaviour
     private Transform pianoChair;
     private Animator anim;
     private PhotonView pv;
+    private float currKillTime;
 
 
     private void Awake()
@@ -30,6 +31,7 @@ public class csEnemyPiano : MonoBehaviour
         audio.playOnAwake = false;
         playerCount = 0;
         isPlay = false;
+        currKillTime = 0;
     }
 
     // Update is called once per frame
@@ -47,22 +49,25 @@ public class csEnemyPiano : MonoBehaviour
         }
     }
 
-    [ContextMenu("pkTest")]
     void PianoKill()
     {
-        killPlayers = GetComponentInChildren<csPianoKillCk>().players;
-        for (int i = 0; i < killPlayers.Length; i++)
+        //딜레이주기
+        if (Time.time > currKillTime + 7f)
         {
-            if (killPlayers[i] != null)
+            killPlayers = GetComponentInChildren<csPianoKillCk>().players;
+            for (int i = 0; i < killPlayers.Length; i++)
             {
-                killPlayers[i].GetComponent<csPlayerCtrl>().PianoDie(transform);
+                if (killPlayers[i] != null)
+                {
+                    killPlayers[i].GetComponent<csPlayerCtrl>().PianoDie(transform);
+                    killPlayers[i] = null;
+                }
             }
+            //플레이어와 의자를 자연스럽게 뒤로 밀면서 애니메이션 재생할예정 3초뒤 앞으로 오는 모션도 포함
+            StartCoroutine("Move");
+            anim.SetTrigger("Kill");
+            currKillTime = Time.time;
         }
-        //플레이어와 의자를 자연스럽게 뒤로 밀면서 애니메이션 재생할예정 3초뒤 앞으로 오는 모션도 포함
-        StartCoroutine("Move");
-        anim.SetTrigger("Kill");
-        //모두 죽인 뒤 초기화,,
-        //killPlayers.Initialize();
     }
 
     //의자랑 캐릭터 움직이는 스크립트
@@ -143,7 +148,7 @@ public class csEnemyPiano : MonoBehaviour
     }
 
     //인터페이스에 의해 구현은 해야한다.
-    void OnPhotonSerializeView(PhotonStream stream,PhotonMessageInfo info)
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
 
     }

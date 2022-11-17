@@ -58,4 +58,7 @@ MonoBehaviour:
   - ChairAnim
   - PianoDie
   - ObserveCamera
+  - NetDie
+  - GhostPlay
+  - INGameBGM
   DisableAutoOpenWizard: 1

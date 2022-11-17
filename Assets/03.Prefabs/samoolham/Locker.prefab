@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 5688248617794630124}
   - component: {fileID: 7312887348794411181}
   - component: {fileID: 3733096834317130455}
+  - component: {fileID: 7647281071642955004}
   m_Layer: 0
   m_Name: LockerDoor
   m_TagString: Untagged
@@ -236,6 +237,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.53999996, y: 0.338, z: 0.026000023}
   m_Center: {x: -5.495026, y: 0.201, z: -2.2982814}
+--- !u!208 &7647281071642955004
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4445911154778854709}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.27, y: 0.16900001, z: 0.013}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -5.4950004, y: 0.201, z: -2.298}
+  m_TimeToStationary: 0.5
 --- !u!1 &4561903647128386818
 GameObject:
   m_ObjectHideFlags: 0
