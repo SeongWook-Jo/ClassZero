@@ -61,11 +61,50 @@ public class SoundManager : MonoBehaviour
 
     }
 
+    //조성욱이 짜는 스크립트 영역 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+    public void Play(AudioSource audio, string tag)
+    {
+        if (tag == "Door")
+        {
+            audio.PlayOneShot(ObjectSoundFile[0]);
+        }
+        else if (tag == "Locker")
+        {
+            audio.PlayOneShot(ObjectSoundFile[1]);
+        }
+        else if (tag == "Chair")
+        {
+            audio.PlayOneShot(ObjectSoundFile[2]);
+
+        }
+        else if (tag == "OfficeChair")
+        {
+            audio.PlayOneShot(ObjectSoundFile[3]);
+        }
+        else if (tag == "Switch")
+        {
+            audio.PlayOneShot(ObjectSoundFile[4]);
+        }
+        else if (tag == "Item")
+        {
+
+        }
+        else if (tag == "Clue")
+        {
+
+        }
+    }
+
+
+
+
+    // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
     // Slider와 Toggle 컴퍼넌트에서 이벤트 발생시 호출할 함수 (public 키워드로 외부접근 가능하게함)
     //호출시 초기화
     public void SetSound()
     {
-
         //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
         UIaudio.clip = UIsoundFile[1];
         //실행
@@ -87,14 +126,11 @@ public class SoundManager : MonoBehaviour
         {
             audioSources[i].volume = soundVolume;
         }
-
-
         UIaudio.mute = isSoundMute;   // audioSource의 Mute 셋팅
         for (int i = 0; i < 3; i++)
         {
             audioSources[i].mute = isSoundMute;
         }
-
     }
 
     //버튼 연결

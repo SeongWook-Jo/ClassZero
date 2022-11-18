@@ -178,6 +178,8 @@ public class csInGameUiManager : MonoBehaviour
     public void OnClick_InGame_ReturnBtn() //InGame Ui에서 나와서 다시 게임으로 돌아감, ReturnBtn
     {
         InGameUi.SetActive(false);
+        MainMenuActivated = false;
+        inventoryActivated = false;
     }
 
     //ExitBtn 

@@ -85,9 +85,13 @@ public class csPlayerCtrl : MonoBehaviour
     private GameObject[] observeTarget = { null, null };
     Quaternion cameraRot;
 
+
     //그모냐,, UI작업
     csInGameUiManager UIManager;
-
+    
+    //사운드작업
+    SoundManager soundManager;
+    AudioSource audio;
     void Awake()
     {
         pv = GetComponent<PhotonView>();
@@ -97,7 +101,7 @@ public class csPlayerCtrl : MonoBehaviour
         currRot = transform.rotation;
         observeCamera = transform.Find("ObserveCamera");
         StartCoroutine(this.ActivePlayer());
-
+        audio = GetComponent<AudioSource>();
         if (pv.isMine)
         {
             TrigPopup = transform.Find("Player_FP").Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
@@ -107,6 +111,7 @@ public class csPlayerCtrl : MonoBehaviour
             rectrPlayerDot = imgMap.transform.Find("PlayerDot").GetComponent<RectTransform>();
             mytr = GetComponent<Transform>();
             UIManager = GameObject.Find("UiManager").GetComponent<csInGameUiManager>();
+            soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         }
     }
 
@@ -208,6 +213,7 @@ public class csPlayerCtrl : MonoBehaviour
         {
             if (Mathf.Abs(a.transform.position.y - transform.position.y) > 1f)
             {
+                if (a.tag == "SoundManager") continue;
                 a.enabled = false;
             }
             else
@@ -274,6 +280,7 @@ public class csPlayerCtrl : MonoBehaviour
                     //전체 플레이어에게 동기화를 해주기 위해 pv.RPC로 쏴줌.
                     //csTrigObj 스크립트 내에 함수 실행
                     hitInfo.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -284,6 +291,7 @@ public class csPlayerCtrl : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     hitInfo.collider.transform.SendMessage("ChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -294,6 +302,7 @@ public class csPlayerCtrl : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     hitInfo.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -310,6 +319,7 @@ public class csPlayerCtrl : MonoBehaviour
                     //{
                     //    l.enabled = !l.enabled;
                     //}
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -322,6 +332,7 @@ public class csPlayerCtrl : MonoBehaviour
                     Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
                     UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
                     Destroy(hitInfo.transform.gameObject);
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -334,6 +345,7 @@ public class csPlayerCtrl : MonoBehaviour
                     Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
                     UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
                     Destroy(hitInfo.transform.gameObject);
+                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -345,6 +357,11 @@ public class csPlayerCtrl : MonoBehaviour
             TrigPopup.SetActive(false);
         }
 
+    }
+    [PunRPC]
+    void PlaySound(string objTag)
+    {
+        soundManager.Play(audio, objTag);
     }
 
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
@@ -586,6 +603,10 @@ public class csPlayerCtrl : MonoBehaviour
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
                 }
+            }
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                UIManager.OnClick_M1();
             }
         }
     }

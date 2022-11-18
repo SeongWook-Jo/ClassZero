@@ -53,4 +53,6 @@ MonoBehaviour:
   - RequestForPickupItems
   - RequestForPickupTimes
   - TaggedPlayer
+  - SoundPlay
+  - PlaySound
   DisableAutoOpenWizard: 1
