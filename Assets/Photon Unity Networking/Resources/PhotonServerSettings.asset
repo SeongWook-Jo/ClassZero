@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3758f8f58fdef43803eb9be1df0608, type: 3}
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
-  AppID: 00bd8470-36a3-4087-912e-d2fdfe576b96
+  AppID: f1960a44-e648-4942-878c-f130413eccec
   VoiceAppID: 
   ChatAppID: 
-  HostType: 1
-  PreferredRegion: 9
-  EnabledRegions: -1
+  HostType: 4
+  PreferredRegion: 0
+  EnabledRegions: 256
   Protocol: 0
   ServerAddress: 
   ServerPort: 5055
@@ -28,37 +28,29 @@ MonoBehaviour:
   NetworkLogging: 1
   RunInBackground: 1
   RpcList:
+  - CharacterOnOff
   - Chat
+  - ChatMsg
   - ColorRpc
   - DestroyRpc
   - DoJump
+  - DoorAnim
   - Flash
+  - GhostPlay
+  - INGameBGM
   - InstantiateRpc
+  - LightAnim
   - Marco
+  - NetDie
+  - ObserveCamera
   - PickupItemInit
+  - PlaySpwnDisable
   - Polo
   - PunPickup
   - PunPickupSimple
   - PunRespawn
+  - Ready
   - RequestForPickupItems
   - RequestForPickupTimes
   - TaggedPlayer
-  - PlayerIdSend
-  - Ready
-  - CharacterOnOff
-  - ReceiveMsg
-  - ChatMsg
-  - PlaySpwnDisable
-  - AnimSyncDoor
-  - PlayAnim
-  - PlayDoorAnim
-  - PlayLightAnim
-  - DoorAnim
-  - LightAnim
-  - ChairAnim
-  - PianoDie
-  - ObserveCamera
-  - NetDie
-  - GhostPlay
-  - INGameBGM
   DisableAutoOpenWizard: 1

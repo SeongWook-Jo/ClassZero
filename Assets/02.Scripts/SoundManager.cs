@@ -17,7 +17,8 @@ public class SoundManager : MonoBehaviour
     public float soundVolume = 1.0f;  // 사운드 볼륨 설정 변수
     public bool isSoundMute = false;  // 사운드 뮤트 설정 변수
     public Slider bgm_sl;
-   
+
+
     //public Slider sEffect_sl;
 
     public Toggle bgm_tg;
@@ -33,15 +34,15 @@ public class SoundManager : MonoBehaviour
         pv = GetComponent<PhotonView>();
         UIaudio = GetComponent<AudioSource>();
         //사운드매니저 게임오브젝트에 사운드리소스를 여러개 추가해서 관리 할것임
-        for(int i = 0;i<4;i++) //3개추가하겠다
+        for (int i = 0; i < 4; i++) //3개추가하겠다
         {
             audioSources[i] = gameObject.AddComponent<AudioSource>() as AudioSource;
             //UIaudio = ui사운드,[0] = 플레이어사운드,[1] = 고스트사운드,[2] = 배경음악,[3] = 사물사운드
             //uiaudio때문에 제대로 적용 안됌 -1 로 계산해서 스크립트 짤것
         }
         //DontDestroyOnLoad(this.gameObject);  ////씬이 넘어가도 이 오브젝트를 계속 가져감
-       
-        
+
+
         LoadData();  // 게임 로드(사운드 셋팅 저장된 값을 불러옴)
     }
 
@@ -64,7 +65,7 @@ public class SoundManager : MonoBehaviour
     //호출시 초기화
     public void SetSound()
     {
-    
+
         //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
         UIaudio.clip = UIsoundFile[1];
         //실행
@@ -82,12 +83,12 @@ public class SoundManager : MonoBehaviour
     void AudioSet()
     {
         UIaudio.volume = soundVolume; // audioSource의 볼륨 셋팅
-        for(int i =0;i<3; i++) //사운드리소스 3개 했으니 3개를 뮤트해야함
+        for (int i = 0; i < 3; i++) //사운드리소스 3개 했으니 3개를 뮤트해야함
         {
-          audioSources[i].volume = soundVolume;
+            audioSources[i].volume = soundVolume;
         }
-       
-        
+
+
         UIaudio.mute = isSoundMute;   // audioSource의 Mute 셋팅
         for (int i = 0; i < 3; i++)
         {
@@ -157,7 +158,7 @@ public class SoundManager : MonoBehaviour
 
         //첫 세이브시 설정 -> 이 로직 없으면 첫 시작 사운드 볼륨0
         int isSave = PlayerPrefs.GetInt("ISSAVE");
-        if(isSave ==0)
+        if (isSave == 0)
         {
             bgm_sl.value = 1.0f;
             //sEffect_sl.value = 1.0f;
@@ -169,7 +170,7 @@ public class SoundManager : MonoBehaviour
             SaveData();
             PlayerPrefs.SetInt("ISSAVE", 1);
         }
-            
+
     }
     /* 
      audio.volume = n 사운드크기조절 최대 1.0f
@@ -206,7 +207,7 @@ public class SoundManager : MonoBehaviour
         audioSources[2].clip = BGMSoundFile[1];
         audioSources[2].Play();
     }
-   public void BackLobbyBGM()
+    public void BackLobbyBGM()
     {
         audioSources[2].clip = BGMSoundFile[0];
         audioSources[2].Play();
@@ -214,15 +215,15 @@ public class SoundManager : MonoBehaviour
     //포톤
     public void AllUesrInGameBGMStart()
     {
-            pv.RPC("INGameBGM", PhotonTargets.All);
+        pv.RPC("INGameBGM", PhotonTargets.All);
     }
-    
+
     [PunRPC]
     public void INGameBGM()
     {
         audioSources[2].clip = BGMSoundFile[2];
         audioSources[2].Play();
-        
+
     }
 
 

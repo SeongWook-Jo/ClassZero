@@ -38,7 +38,7 @@ public class csStageManager : MonoBehaviour
     IEnumerator CreatePlayer()
     {
         //랜덤값 적용으로 다른 플레이어와 코루틴이 동시에 실행돼서 같은 위치에 생성되는 현상 방지
-        yield return new WaitForSeconds(Random.Range(0.1f,3.0f));
+        yield return new WaitForSeconds(Random.Range(0.1f, 3.0f));
         //입장한 플레이어가 방에서 몇번째 플레이어인지 확인
         int myNumInRoom = (int)PhotonNetwork.player.CustomProperties["NumberInRoom"];
         //플레이어 랜덤 위치 선정을 위해 난수 생성

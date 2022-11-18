@@ -66,7 +66,7 @@ public class csPlayerCtrl : MonoBehaviour
 
     //Raycast를 위한 변수
     private Ray ray;
-    private RaycastHit[] hitInfo;
+    private RaycastHit hitInfo;
     //현재 public으로 떼다 붙여서 구현했지만 private로 하고 스크립트로 가져오고싶음 참고사항
     public GameObject TrigPopup;
     public Text txtPopup;
@@ -84,6 +84,9 @@ public class csPlayerCtrl : MonoBehaviour
     private Transform observeCamera;
     private GameObject[] observeTarget = { null, null };
     Quaternion cameraRot;
+
+    //그모냐,, UI작업
+    csInGameUiManager UIManager;
 
     void Awake()
     {
@@ -103,6 +106,7 @@ public class csPlayerCtrl : MonoBehaviour
             txtMap = transform.Find("Player_FP").Find("Canvas_User_UI").Find("Minimap").Find("imgMap").Find("txtMap").GetComponent<Text>();
             rectrPlayerDot = imgMap.transform.Find("PlayerDot").GetComponent<RectTransform>();
             mytr = GetComponent<Transform>();
+            UIManager = GameObject.Find("UiManager").GetComponent<csInGameUiManager>();
         }
     }
 
@@ -150,7 +154,7 @@ public class csPlayerCtrl : MonoBehaviour
             {
                 PlayerAnimState();
             }
-            MouseOnOff();
+            UiOnOff();
             return;
         }
 
@@ -161,7 +165,7 @@ public class csPlayerCtrl : MonoBehaviour
             CharacterView();
         }
 
-        MouseOnOff();
+
 
         if (pv.isMine)
         {
@@ -175,6 +179,7 @@ public class csPlayerCtrl : MonoBehaviour
             PlayerRaycast();
             //Y값에 따라서 다른 사운드 Off
             SoundOnOff();
+            UiOnOff();
         }
         //레이캐스트로 상호작용 오브젝트 판별
         else
@@ -199,9 +204,9 @@ public class csPlayerCtrl : MonoBehaviour
     void SoundOnOff()
     {
         AudioSource[] audioSetting = GameObject.FindObjectsOfType<AudioSource>();
-        foreach(AudioSource a in audioSetting)
+        foreach (AudioSource a in audioSetting)
         {
-            if(Mathf.Abs(a.transform.position.y - transform.position.y) > 1f )
+            if (Mathf.Abs(a.transform.position.y - transform.position.y) > 1f)
             {
                 a.enabled = false;
             }
@@ -235,7 +240,6 @@ public class csPlayerCtrl : MonoBehaviour
     void PlayerRaycast()
     {
         //아무것도 안띄우는걸 Default로 설정 
-        TrigPopup.SetActive(false);
         ray.origin = playerCamera.transform.position;
         ray.direction = playerCamera.transform.forward;
         /*
@@ -259,12 +263,9 @@ public class csPlayerCtrl : MonoBehaviour
         */
 
         //Raycast로 진행 시 이상한 충돌로 인해 정상적으로 안되는 경우가 있음. 무겁지만 RaycastAll로 진행
-        hitInfo = Physics.RaycastAll(ray, 1.0f);
-
-
-        foreach (RaycastHit a in hitInfo)
+        if (Physics.Raycast(ray, out hitInfo, 1.0f, 1 << LayerMask.NameToLayer("Trigger")))
         {
-            if (a.collider.tag == "Door" || a.collider.tag == "Locker")
+            if (hitInfo.collider.tag == "Door" || hitInfo.collider.tag == "Locker")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
@@ -272,31 +273,31 @@ public class csPlayerCtrl : MonoBehaviour
                 {
                     //전체 플레이어에게 동기화를 해주기 위해 pv.RPC로 쏴줌.
                     //csTrigObj 스크립트 내에 함수 실행
-                    a.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    hitInfo.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
                 }
                 return;
             }
-            if (a.collider.tag == "Chair")
+            if (hitInfo.collider.tag == "Chair")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    a.collider.transform.SendMessage("ChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    hitInfo.collider.transform.SendMessage("ChairOnOff", null, SendMessageOptions.DontRequireReceiver);
                 }
                 return;
             }
-            if (a.collider.tag == "OfficeChair")
+            if (hitInfo.collider.tag == "OfficeChair")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
                 if (Input.GetMouseButtonDown(0))
                 {
-                    a.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    hitInfo.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
                 }
                 return;
             }
-            if (a.collider.tag == "Swich")
+            if (hitInfo.collider.tag == "Switch")
             {
                 txtPopup.text = "";
                 TrigPopup.SetActive(true);
@@ -304,7 +305,7 @@ public class csPlayerCtrl : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     //Light[] li = a.collider.transform.parent.GetComponentsInChildren<Light>();
-                    a.collider.transform.parent.SendMessage("LightOnOff", null, SendMessageOptions.DontRequireReceiver);
+                    hitInfo.collider.transform.parent.SendMessage("LightOnOff", null, SendMessageOptions.DontRequireReceiver);
                     //foreach (Light l in li)
                     //{
                     //    l.enabled = !l.enabled;
@@ -312,12 +313,37 @@ public class csPlayerCtrl : MonoBehaviour
                 }
                 return;
             }
-            if (a.collider.tag == "Item")
+            if (hitInfo.collider.tag == "Item")
             {
-
+                txtPopup.text = "...!";
+                TrigPopup.SetActive(true);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
+                    UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
+                    Destroy(hitInfo.transform.gameObject);
+                }
+                return;
+            }
+            if (hitInfo.collider.tag == "Clue")
+            {
+                txtPopup.text = "필기하기...";
+                TrigPopup.SetActive(true);
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
+                    UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
+                    Destroy(hitInfo.transform.gameObject);
+                }
+                return;
             }
         }
-
+        //Trigger 레이어와 상호작용 안할 때
+        else
+        {
+            txtPopup.text = "";
+            TrigPopup.SetActive(false);
+        }
 
     }
 
@@ -529,20 +555,38 @@ public class csPlayerCtrl : MonoBehaviour
     }
 
     // 마우스 OnOff 함수
-    void MouseOnOff()
+    void UiOnOff()
     {
         if (pv.isMine)
         {
-            //ESC입력으로 마우스 보이게 하기
-            if (Input.GetKey(KeyCode.Escape))
+            //하나라도 켜져있으면 마우스 보이게하기
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (Cursor.visible == false)
+                if (UIManager.MainMenuOn())
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
                 }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
             }
 
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                if (UIManager.InventoryOn())
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+            }
         }
     }
 
