@@ -16,7 +16,7 @@ public class Item : ScriptableObject // ScriptableObject => 게임 오브젝트�
     public GameObject itemPrefab; // 아이템의 프리팹.
     //clue를 위해 추가
     public Text clueText;
-    public string[] itemtext; // 텍스트 내용 받을것
+    public static string[] clueInText = { "1", "2", "3", "4", "5" };  // 텍스트 내용 받을 것
 
     //public string weaponType; // 무기 유형. 우린 무기 없음
 

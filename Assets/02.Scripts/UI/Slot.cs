@@ -8,7 +8,12 @@ public class Slot : MonoBehaviour
 
     public Item item; // 획득한 아이템
     public Image itemImage; // 아이템의 이미지.
-    public Text clueText; // 단서 text
+    public Text prf_Intext; // 단서 text
+    
+
+    public GameObject ClueList_prf;
+    public GameObject scrollContents;
+    GameObject textinfo;
 
 
     [SerializeField]
@@ -54,7 +59,23 @@ public class Slot : MonoBehaviour
         {
             // 아이템 타입이 clue, text를 Inven_Clue의 Scroll View 하위의 Content 및에 ClueList_prf, Clueprf 
             // 의 text에 받아와 주는걸 함...
-            clueText = item.clueText;
+            //clueText = item.clueText;
+
+            // 아이템 타입이 clue, text를 Inven_Clue의 Scroll View 하위의 Content 및에 ClueList_prf, Clueprf 
+            // 의 text에 받아와 주는걸 함...
+            //clueText.text = _item.clueInText[1];
+            Debug.Log("Clue");
+            // ClueList_prf를 ScrollView 영역에 생성하는 파트----------------
+            //GameObject textinfo = (GameObject)Instantiate(ClueList_prf);
+            textinfo = Instantiate<GameObject>(ClueList_prf, transform);
+            Debug.Log(textinfo);
+            textinfo.GetComponentInChildren<Text>().text = Item.clueInText[1];
+            
+            //textinfo.transform.SetParent(scrollContents.transform, false);
+
+            int rowCount = 0;
+            scrollContents.GetComponent<GridLayoutGroup>().constraintCount = ++rowCount;
+            scrollContents.GetComponent<RectTransform>().sizeDelta += new Vector2(0, 10);
         }
 
         SetColor(1);
@@ -66,7 +87,7 @@ public class Slot : MonoBehaviour
         item = null;
         itemImage.sprite = null;
         SetColor(0);
-        clueText.text = "";
+        //clueText.text = "";
         go_CountImage.SetActive(false);
     }
 }

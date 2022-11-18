@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7739440867084398968}
   - component: {fileID: 7739440867084398969}
   - component: {fileID: 7739440867084398970}
+  - component: {fileID: 1485925089220055821}
   m_Layer: 5
   m_Name: ClueList_prf
   m_TagString: ClueListPrf
@@ -118,7 +119,34 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7739440867084398969}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1485925089220055821}
+        m_MethodName: OnClick_ClueList
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1485925089220055821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7739440867084398948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60156e4e4c587f4db74d665943ffd15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Inven_ClueList: {fileID: 7739440867084398948}
+  Inven_Clue: {fileID: 3368992780323218565, guid: d0db638932f4f8741a1c4f71ac36148b,
+    type: 3}
+  mytext: {fileID: 7739440868224496497}
 --- !u!1 &7739440868224496499
 GameObject:
   m_ObjectHideFlags: 0

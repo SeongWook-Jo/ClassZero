@@ -128,17 +128,17 @@ public class csInGameUiManager : MonoBehaviour
 
 
 
-    public void OnClick_ClueList() // 단서들중에 하나 골라서 읽으려고 클릭-> 단서 내용 읽을 수 있는 Page Popup
-    {
-        Inven_ClueList.SetActive(false);
-        Inven_Clue.SetActive(true);
-    }
+    //public void OnClick_ClueList() // 단서들중에 하나 골라서 읽으려고 클릭-> 단서 내용 읽을 수 있는 Page Popup
+    //{
+    //    Inven_ClueList.SetActive(false);
+    //    Inven_Clue.SetActive(true);
+
+    //}
 
     public void OnClick_X() //단서 PopUp된것 닫기
     {
         Inven_Clue.SetActive(false);
         Inven_ClueList.SetActive(true);
-
 
     }
 
