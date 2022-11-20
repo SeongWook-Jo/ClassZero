@@ -13,6 +13,10 @@ public class csStageManager : MonoBehaviour
     private int count;
     Room room;
     PhotonView pv;
+    public GameObject[] players;
+    public int dieCk;
+
+    public csClearPoint clearChk;
 
     private void Awake()
     {
@@ -25,13 +29,51 @@ public class csStageManager : MonoBehaviour
         computerSpawner = GameObject.Find("ComputerSpwn").GetComponent<Transform>();
         patrolOneSpawner = GameObject.Find("PatrolOneSpwn").GetComponent<Transform>();
         patrolTwoSpawner = GameObject.Find("PatrolTwoSpwn").GetComponent<Transform>();
+        clearChk = GameObject.Find("CheckPoint").GetComponent<csClearPoint>();
+        room = PhotonNetwork.room;
+        PhotonNetwork.automaticallySyncScene = true;
     }
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
         //캐릭터 생성 코루틴 실행
         StartCoroutine(CreatePlayer());
         StartCoroutine(CreateEnemy());
+        //플레이어 생성이 최대 3초 걸리기 때문에 3.5초뒤에 플레이어 목록을 받아옴. players를 기준으로 GameOver 씬 넘김 진행할 예정.
+        yield return new WaitForSeconds(3.5f);
+        players = GameObject.FindGameObjectsWithTag("Player");
+        //패배 조건 할당
+        StartCoroutine("Lose");
+        //승리 조건 할당
+        StartCoroutine("GameClear");
+    }
+
+    IEnumerator GameClear()
+    {
+        while (true)
+        {
+            if (clearChk.itemCount >= 6) PhotonNetwork.LoadLevel("scGameClear");
+            yield return null;
+        }
+        
+    }
+
+    IEnumerator Lose()
+    {
+        while (true)
+        {
+            dieCk = 0;
+            for (int i = 0; i < players.Length; i++)
+            {
+                if (players[i].GetComponent<csPlayerCtrl>().isDie) dieCk += 1;
+            }
+
+            if (dieCk >= room.PlayerCount)
+            {
+                PhotonNetwork.LoadLevel("scGameOver");
+            }
+            yield return null;
+        }
     }
 
     //캐릭터 생성 코루틴, 자기 자신은 1인칭 플레이어 생성 다른 사람에겐 3인칭 플레이어 생성.
@@ -56,11 +98,13 @@ public class csStageManager : MonoBehaviour
         pv.RPC("PlaySpwnDisable", PhotonTargets.All, randNum);
         yield return null;
     }
+
     [PunRPC]
     void PlaySpwnDisable(int num)
     {
         playerSpawners[num].gameObject.SetActive(false);
     }
+
     IEnumerator CreateEnemy()
     {
         //yield return new WaitForSeconds(1f);

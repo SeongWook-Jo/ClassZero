@@ -455,7 +455,6 @@ public class csPhotonInit : MonoBehaviour
 
     public void OnclickExitRoom()
     {
-
         //현재 룸을 빠져나가며 생성한 모든 네트워크 객체를 삭제
         PhotonNetwork.LeaveRoom();
     }

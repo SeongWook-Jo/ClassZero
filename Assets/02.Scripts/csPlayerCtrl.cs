@@ -88,7 +88,7 @@ public class csPlayerCtrl : MonoBehaviour
 
     //그모냐,, UI작업
     csInGameUiManager UIManager;
-    
+
     //사운드작업
     SoundManager soundManager;
     AudioSource audio;
@@ -707,6 +707,7 @@ public class csPlayerCtrl : MonoBehaviour
     public IEnumerator DieAction()
     {
         isDie = true;
+        //언태그로 변경해서 몬스터 등이 인식 못하도록 함.
         gameObject.tag = "Untagged";
         if (pv.isMine)
         {
