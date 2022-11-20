@@ -20,8 +20,10 @@ public class csStageManager : MonoBehaviour
 
     private void Awake()
     {
+        
         //씬 전환할 때 메세지 중지 넘어온 후 다시 받기.
         PhotonNetwork.isMessageQueueRunning = true;
+        PhotonNetwork.room.IsVisible = false;
         pv = GetComponent<PhotonView>();
         //GetComponentsInChildren은 부모객체부터 가져와서 1~3의 숫자로 할당해야함
         playerSpawners = GameObject.Find("PlayerSpawner").GetComponentsInChildren<Transform>();
@@ -39,6 +41,7 @@ public class csStageManager : MonoBehaviour
         //캐릭터 생성 코루틴 실행
         StartCoroutine(CreatePlayer());
         StartCoroutine(CreateEnemy());
+        StartCoroutine(CreateItem());
         //플레이어 생성이 최대 3초 걸리기 때문에 3.5초뒤에 플레이어 목록을 받아옴. players를 기준으로 GameOver 씬 넘김 진행할 예정.
         yield return new WaitForSeconds(3.5f);
         players = GameObject.FindGameObjectsWithTag("Player");
@@ -47,7 +50,14 @@ public class csStageManager : MonoBehaviour
         //승리 조건 할당
         StartCoroutine("GameClear");
     }
-
+    IEnumerator CreateItem()
+    {
+        Transform itemTr = GameObject.Find("itemtest1").GetComponent<Transform>();
+        PhotonNetwork.InstantiateSceneObject("pig", itemTr.position, itemTr.rotation, 0, null);
+        itemTr = GameObject.Find("itemtest2").GetComponent<Transform>();
+        PhotonNetwork.InstantiateSceneObject("Pickaxe", itemTr.position, itemTr.rotation, 0, null);
+        yield return null;
+    }
     IEnumerator GameClear()
     {
         while (true)

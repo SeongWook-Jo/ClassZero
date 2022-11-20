@@ -93,39 +93,8 @@ public class Inventory : MonoBehaviour
         slots = go_SlotsParent.GetComponentsInChildren<Slot>();  // Item slot 배열
         clueSlots = go_ClueSlotParent.GetComponentsInChildren<Slot>(); // clue slot 배열
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        TryOpenInventory();  //  i버튼 누를 때 인벤토리 호출 해주고..
-    }
-
-    private void TryOpenInventory()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            inventoryActivated = !inventoryActivated;
-
-            if (inventoryActivated)
-                OpenInventory();
-            else
-                CloseInventory();
-        }
-    }
-
-    private void OpenInventory()
-    {
-        go_InventoryBase.SetActive(true);
-    }
-
-    private void CloseInventory()
-    {
-        go_InventoryBase.SetActive(false);
-    }
-
-
     // 슬롯에 아이템 채워넣기
-    public void AcquireItem(Item _item, int _count = 1)
+    public void AcquireItem(Item _item)
     {
         if (Item.ItemType.Clue != _item.itemType)  // Clue가 아닐경우에... 즉, item일 경우에
         {
@@ -162,6 +131,48 @@ public class Inventory : MonoBehaviour
             }
         }
 
+    }
+    public void OnClickDrop0()
+    {
+        // 클릭했을 때 아이템 타입이면
+        //if (Item.ItemType.Clue != _item.itemType)
+        //if(Item.ItemType.Clue!=Item.ItemType.Item)
+        //{            
+        //   slots[i].Drop();
+
+        //   //Instantiate<GameObject>();
+        //}
+
+        slots[0].ClearSlot();
+        //Instantiate<GameObject>()
+    }
+    public void OnClickDrop1()
+    {
+        // 클릭했을 때 아이템 타입이면
+        //if (Item.ItemType.Clue != _item.itemType)
+        //if(Item.ItemType.Clue!=Item.ItemType.Item)
+        //{            
+        //   slots[i].Drop();
+
+        //   //Instantiate<GameObject>();
+        //}
+
+        slots[1].ClearSlot();
+        //Instantiate<GameObject>()
+    }
+    public void OnClickDrop2()
+    {
+        // 클릭했을 때 아이템 타입이면
+        //if (Item.ItemType.Clue != _item.itemType)
+        //if(Item.ItemType.Clue!=Item.ItemType.Item)
+        //{            
+        //   slots[i].Drop();
+
+        //   //Instantiate<GameObject>();
+        //}
+
+        slots[2].ClearSlot();
+        //Instantiate<GameObject>()
     }
 }
 

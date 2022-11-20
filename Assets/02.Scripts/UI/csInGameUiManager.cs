@@ -30,10 +30,13 @@ public class csInGameUiManager : MonoBehaviour
     public Inventory theInventory;
     [SerializeField]
     private GameObject go_InventoryBase;  // 인벤토리 Page Onoff 시키기 위함... 부모로 하이라키에 만들어놓음
-    public static bool inventoryActivated = false; // 인벤 켜지면 카메라나 다른 것 기능 안하게... 안움직이게 막는것
+    public bool inventoryActivated = false; // 인벤 켜지면 카메라나 다른 것 기능 안하게... 안움직이게 막는것
     [SerializeField]
     private GameObject MainMenu;
-    public static bool MainMenuActivated = false;
+    public bool MainMenuActivated = false;
+    [SerializeField]
+    private GameObject Map;
+    public bool MapActivated = false;
 
     // Esc
     public void OnClickInfo()
@@ -52,51 +55,89 @@ public class csInGameUiManager : MonoBehaviour
 
     //Inven
 
-    public bool InventoryOn()
+    public bool InventoryOnOff()
     {
-        inventoryActivated = !inventoryActivated;
         if (inventoryActivated)
         {
-            OpenInventory();
-            CloseMainMenu();
-            return true;
+            CloseInventory();
+            //CloseMainMenu();
+            //CloseMap();
+            return false;
         }
         else
         {
-            CloseInventory();
-            return false;
+            CloseMainMenu();
+            CloseMap();
+            OpenInventory();
+            return true;
         }
+        inventoryActivated = !inventoryActivated;
     }
-    public bool MainMenuOn()
+    public bool MainMenuOnOff()
     {
-        MainMenuActivated = !MainMenuActivated;
         if (MainMenuActivated)
         {
+            CloseMainMenu();
+            //CloseMainMenu();
+            //CloseMap();
+            return false;
+        }
+        else
+        {
             OpenMainMenu();
+            CloseMap();
             CloseInventory();
             return true;
+        }
+        MainMenuActivated = !MainMenuActivated;
+    }
+    public bool MapOnOff()
+    {
+        if (MapActivated)
+        {
+            CloseMap();
+            //CloseMainMenu();
+            //CloseMap();
+            return false;
         }
         else
         {
             CloseMainMenu();
-            return false;
+            OpenMap();
+            CloseInventory();
+            return true;
         }
+        MapActivated = !MapActivated;
     }
     private void OpenMainMenu()
     {
         MainMenu.SetActive(true);
+        MainMenuActivated = true;
     }
     private void CloseMainMenu()
     {
         MainMenu.SetActive(false);
+        MainMenuActivated = false;
     }
     private void OpenInventory()
     {
         go_InventoryBase.SetActive(true);
+        inventoryActivated = true;
     }
     private void CloseInventory()
     {
         go_InventoryBase.SetActive(false);
+        inventoryActivated = false;
+    }
+    private void OpenMap()
+    {
+        Map.SetActive(true);
+        MapActivated = true;
+    }
+    private void CloseMap()
+    {
+        Map.SetActive(false);
+        MapActivated = false;
     }
     public void OnClickInven_Item()
     {
@@ -177,9 +218,20 @@ public class csInGameUiManager : MonoBehaviour
     //ReturnBtn
     public void OnClick_InGame_ReturnBtn() //InGame Ui에서 나와서 다시 게임으로 돌아감, ReturnBtn
     {
-        InGameUi.SetActive(false);
+        Map.SetActive(false);
+        MainMenu.SetActive(false);
+        go_InventoryBase.SetActive(false);
         MainMenuActivated = false;
         inventoryActivated = false;
+        MapActivated = false;
+        //구조상 문제로 무식하게 진행.. 리턴 버튼 클릭시 Player의 isStop false로 변경 및 커서보임.
+        GameObject myPlayer = GameObject.Find("Player_FP");
+        if(myPlayer != null)
+        {
+            myPlayer.transform.root.GetComponent<csPlayerCtrl>().isStop = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     //ExitBtn 
@@ -189,8 +241,7 @@ public class csInGameUiManager : MonoBehaviour
         //GameObject.Find("").GetComponent<Canvas>().enabled = false;
 
         SceneManager.LoadScene("scNetLobby");
-
-        //PhotonNetwork.LeaveRoom();
+        PhotonNetwork.LeaveRoom();
     }
 
 }

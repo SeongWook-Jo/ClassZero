@@ -82,7 +82,7 @@ public class Slot : MonoBehaviour
     }
 
     // 슬롯 초기화.
-    private void ClearSlot()
+    public void ClearSlot()
     {
         item = null;
         itemImage.sprite = null;

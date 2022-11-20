@@ -61,12 +61,13 @@ public class csPlayerCtrl : MonoBehaviour
     private bool isMove = false;
     private bool isFind = false;
     private bool isPickup = false;
-    private bool isStop = false;
+    [HideInInspector]public bool isStop = false;
     private bool isObserve = false;
 
     //Raycast를 위한 변수
     private Ray ray;
     private RaycastHit hitInfo;
+    private float rayDist = 1.5f;
     //현재 public으로 떼다 붙여서 구현했지만 private로 하고 스크립트로 가져오고싶음 참고사항
     public GameObject TrigPopup;
     public Text txtPopup;
@@ -84,7 +85,8 @@ public class csPlayerCtrl : MonoBehaviour
     private Transform observeCamera;
     private GameObject[] observeTarget = { null, null };
     Quaternion cameraRot;
-
+    //상황에 따라 살아있는 Player 가져오는 배열 ex)관전
+    GameObject[] players;
 
     //그모냐,, UI작업
     csInGameUiManager UIManager;
@@ -138,21 +140,7 @@ public class csPlayerCtrl : MonoBehaviour
                 CharacterState();
                 if (isObserve && Input.GetMouseButtonDown(0))
                 {
-                    //다른 플레이어 관전으로 바꾸는 행위. // Setactive false + camera OnOff
-                    if (!observeTarget[0].transform.Find("ObserveCamera").gameObject.activeSelf)
-                    {
-                        observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(true);
-                        observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(false);
-                        observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
-                        observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(true);
-                        observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(false);
-                        observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(false);
-                        observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(true);
-                    }
+                    ObservTargetChange();
                 }
             }
             else
@@ -205,6 +193,40 @@ public class csPlayerCtrl : MonoBehaviour
         observeCamera.localRotation = Quaternion.Lerp(observeCamera.localRotation, new Quaternion(cameraRot.x, observeCamera.localRotation.y, observeCamera.localRotation.z, observeCamera.localRotation.w), Time.deltaTime * 15.0f);
 
     }
+    void ObservTargetChange()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
+        //살아있는 플레이어가 1명이면 함수 종료
+        if (players.Length == 1)
+        {
+            observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(true);
+            observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(false);
+            observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(true);
+            observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(false);
+            observeTarget[0] = players[0];
+            observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
+            observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
+            return;
+        }
+        observeTarget[0] = players[0];
+        observeTarget[1] = players[1];
+        //다른 플레이어 관전으로 바꾸는 행위. // Setactive false + camera OnOff
+        if (!observeTarget[0].transform.Find("ObserveCamera").gameObject.activeSelf)
+        {
+            observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(true);
+            observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(false);
+            observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
+            observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
+        }
+        else
+        {
+            observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(true);
+            observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(false);
+            observeTarget[1].transform.Find("Player_TP").gameObject.SetActive(false);
+            observeTarget[1].transform.Find("ObserveCamera").gameObject.SetActive(true);
+        }
+    }
+
 
     void SoundOnOff()
     {
@@ -269,7 +291,7 @@ public class csPlayerCtrl : MonoBehaviour
         */
 
         //Raycast로 진행 시 이상한 충돌로 인해 정상적으로 안되는 경우가 있음. 무겁지만 RaycastAll로 진행
-        if (Physics.Raycast(ray, out hitInfo, 1.0f, 1 << LayerMask.NameToLayer("Trigger")))
+        if (Physics.Raycast(ray, out hitInfo, rayDist, 1 << LayerMask.NameToLayer("Trigger")))
         {
             if (hitInfo.collider.tag == "Door" || hitInfo.collider.tag == "Locker")
             {
@@ -331,7 +353,7 @@ public class csPlayerCtrl : MonoBehaviour
                 {
                     Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
                     UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
-                    Destroy(hitInfo.transform.gameObject);
+                    PhotonNetwork.Destroy(hitInfo.transform.gameObject);
                     pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
@@ -348,6 +370,7 @@ public class csPlayerCtrl : MonoBehaviour
                     pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
+
             }
         }
         //Trigger 레이어와 상호작용 안할 때
@@ -579,34 +602,49 @@ public class csPlayerCtrl : MonoBehaviour
             //하나라도 켜져있으면 마우스 보이게하기
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                if (UIManager.MainMenuOn())
+                if (UIManager.MainMenuOnOff())
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
+                    isStop = true;
                 }
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
+                    isStop = false;
                 }
             }
 
             if (Input.GetKeyDown(KeyCode.I))
             {
-                if (UIManager.InventoryOn())
+                if (UIManager.InventoryOnOff())
                 {
                     Cursor.lockState = CursorLockMode.None;
                     Cursor.visible = true;
+                    isStop = true;
                 }
                 else
                 {
                     Cursor.lockState = CursorLockMode.Locked;
                     Cursor.visible = false;
+                    isStop = false;
                 }
             }
             if (Input.GetKeyDown(KeyCode.M))
             {
-                UIManager.OnClick_M1();
+                if (UIManager.MapOnOff())
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    isStop = true;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    isStop = false;
+                }
             }
         }
     }
@@ -693,21 +731,23 @@ public class csPlayerCtrl : MonoBehaviour
 
 
     //죽었을 때 코루틴으로 DieAction 쏴줌.
-    [ContextMenu("DieTest")]
     public void Die()
     {
         Debug.Log("죽음실행");
         pv.RPC("NetDie", PhotonTargets.All);
     }
+    //다른 플레이어가 보는 내 캐릭터에도 Die 동기화
     [PunRPC]
     void NetDie()
     {
         StartCoroutine("DieAction");
     }
+
+    //사망시 행동
     public IEnumerator DieAction()
     {
         isDie = true;
-        //언태그로 변경해서 몬스터 등이 인식 못하도록 함.
+        //언태그로 변경해서 몬스터 등이 인식 못하도록 함. + 관전 시 안불러오기 위해.
         gameObject.tag = "Untagged";
         if (pv.isMine)
         {
@@ -717,21 +757,17 @@ public class csPlayerCtrl : MonoBehaviour
             yield return new WaitForSeconds(5f);
 
             //관전으로 넘어가는 부분
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            for (int i = 0; i < players.Length; i++)
+            players = GameObject.FindGameObjectsWithTag("Player");
+
+            if (players[0] != null)
             {
-                if (gameObject.name != players[i].name)
-                {
-                    if (observeTarget[0] == null)
-                    {
-                        observeTarget[0] = players[i];
-                    }
-                    else
-                    {
-                        observeTarget[1] = players[i];
-                    }
-                }
+                observeTarget[0] = players[0];
             }
+            else
+            {
+                Debug.Log("모든 플레이어 사망으로 게임 종료 필요");
+            }
+
             observeTarget[0].transform.Find("Player_TP").gameObject.SetActive(false);
             transform.Find("Player_FP").gameObject.SetActive(false);
             observeTarget[0].transform.Find("ObserveCamera").gameObject.SetActive(true);
@@ -745,6 +781,7 @@ public class csPlayerCtrl : MonoBehaviour
         }
     }
 
+    //피아노 귀신에게 죽었을 때 행동
     public void PianoDie(Transform enemyTr)
     {
         if (pv.isMine)
