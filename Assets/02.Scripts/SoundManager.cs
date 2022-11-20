@@ -17,8 +17,8 @@ public class SoundManager : MonoBehaviour
     public float soundVolume = 1.0f;  // 사운드 볼륨 설정 변수
     public bool isSoundMute = false;  // 사운드 뮤트 설정 변수
     public Slider bgm_sl;
-
-
+    public bool onoff = false;
+    public static SoundManager instance = null;
     //public Slider sEffect_sl;
 
     public Toggle bgm_tg;
@@ -31,6 +31,17 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            if (instance != this)
+            {
+                Destroy(this.gameObject);
+            }
+        }
         pv = GetComponent<PhotonView>();
         UIaudio = GetComponent<AudioSource>();
         //사운드매니저 게임오브젝트에 사운드리소스를 여러개 추가해서 관리 할것임
@@ -111,8 +122,9 @@ public class SoundManager : MonoBehaviour
         UIaudio.Play();
         soundVolume = bgm_sl.value;
         //soundVolume = sEffect_sl.value;
-
+        
         isSoundMute = bgm_tg.isOn;
+        
         //isSoundMute = sEffect_tg.isOn;
 
         AudioSet();
@@ -211,6 +223,7 @@ public class SoundManager : MonoBehaviour
     /* 
      audio.volume = n 사운드크기조절 최대 1.0f
      */
+    #region UI영역
     public void UICloseSound()
     {
         //AudioSource audio의 clip안에 soundFile[n]을 해당 시켜줌
@@ -253,7 +266,8 @@ public class SoundManager : MonoBehaviour
     {
         pv.RPC("INGameBGM", PhotonTargets.All);
     }
-
+    #endregion
+    #region 인게임영역
     [PunRPC]
     public void INGameBGM()
     {
@@ -261,10 +275,82 @@ public class SoundManager : MonoBehaviour
         audioSources[2].Play();
 
     }
+    [PunRPC]
+    public void pianimanSound(AudioSource audio)
+    {
+        audio.clip = GhostSoundFile[0];
+        if (onoff == false)
+        {
+            audio.Play();
+            onoff = true;
+        }
+        else
+        {
+            audio.Pause();
+            onoff = false;
+        }
 
+    }
+    [PunRPC]
+    public void PlayerWalkSound(AudioSource audio)
+    {
+        if (!audio.isPlaying)
+        {
+            
+            audio.Play();
+        }
 
+    }
+    [PunRPC]
+    public void PlayerDie(AudioSource audio)
+    {
 
+        audio.clip = PlayerSoundFile[1];
+        audio.Play();
+
+    }
+    [PunRPC]
+    public void PlayerRunSound(AudioSource audio)
+    {
+        if (!audio.isPlaying)
+        {
+            audio.clip = PlayerSoundFile[0];
+            audio.Play();
+            audio.PlayOneShot(PlayerSoundFile[0]);
+        }
+
+    }
+    [PunRPC]
+    public void PlayerSolowWalkSound(AudioSource audio)
+    {
+        if (!audio.isPlaying)
+        {
+            audio.clip = PlayerSoundFile[0];
+            audio.Play();
+        }
+    }
+    public void PatrolGhostinSound(AudioSource audio)
+    {
+        if(!audio.isPlaying)
+        {
+            audio.clip = GhostSoundFile[1];
+            audio.Play();
+        }
+    }
+    public void PatrolGhostOutSound(AudioSource audio)
+    {
+        audio.Pause();
+    }
+    [PunRPC]
+    public void PatrolGhostAttackSound(AudioSource audio)
+    {
+        if (!audio.isPlaying)
+        {
+            audio.PlayOneShot(GhostSoundFile[2],2.0f);
+        }
+    }
 }
+#endregion
 //// 가까이가면 소리 커지고 멀어지면 작아짐..
 //public void PlayEffect(Vector3 pos, AudioClip sfx)
 //{
