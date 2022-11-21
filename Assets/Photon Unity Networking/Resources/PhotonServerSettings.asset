@@ -16,7 +16,7 @@ MonoBehaviour:
   VoiceAppID: 
   ChatAppID: 
   HostType: 4
-  PreferredRegion: 0
+  PreferredRegion: 9
   EnabledRegions: 256
   Protocol: 0
   ServerAddress: 
@@ -55,4 +55,10 @@ MonoBehaviour:
   - TaggedPlayer
   - SoundPlay
   - PlaySound
+  - PatrolGhostAttackSound
+  - pianimanSound
+  - PlayerDie
+  - PlayerRunSound
+  - PlayerSolowWalkSound
+  - PlayerWalkSound
   DisableAutoOpenWizard: 1

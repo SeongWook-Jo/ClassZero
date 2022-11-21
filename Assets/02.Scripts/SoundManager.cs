@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 //현재 스크립트,현재 게임오브젝트에서 반드시 필요로하는 컴퍼넌트 Attribute로 명시, 자동생성및 삭제 막음
 [RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour

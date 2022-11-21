@@ -104,6 +104,7 @@ public class csPlayerCtrl : MonoBehaviour
         observeCamera = transform.Find("ObserveCamera");
         StartCoroutine(this.ActivePlayer());
         audio = GetComponent<AudioSource>();
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         if (pv.isMine)
         {
             TrigPopup = transform.Find("Player_FP").Find("Canvas_User_UI").Find("ObjectTrigPopup").gameObject;
@@ -113,7 +114,6 @@ public class csPlayerCtrl : MonoBehaviour
             rectrPlayerDot = imgMap.transform.Find("PlayerDot").GetComponent<RectTransform>();
             mytr = GetComponent<Transform>();
             UIManager = GameObject.Find("UiManager").GetComponent<csInGameUiManager>();
-            soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         }
     }
 
