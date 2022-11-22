@@ -82,6 +82,8 @@ public class SoundManager : MonoBehaviour
 
     public void EnemyPatrolStateSound(AudioSource audio, string state)
     {
+        audio.volume = soundVolume;
+        audio.mute = isSoundMute;
         if (!audio.isPlaying)
         {
             if (state == "Kill")
@@ -104,6 +106,8 @@ public class SoundManager : MonoBehaviour
     }
     public void PlayerStateSound(AudioSource audio, string state)
     {
+        audio.volume = soundVolume;
+        audio.mute = isSoundMute;
         if (!audio.isPlaying)
         {
             if (state == "Die")
@@ -116,6 +120,7 @@ public class SoundManager : MonoBehaviour
             }
             else if (state == "Run")
             {
+                audio.PlayOneShot(PlayerSoundFile[1]);
                 audio.PlayOneShot(PlayerSoundFile[1]);
             }
             else if (state == "Walk")
@@ -130,6 +135,8 @@ public class SoundManager : MonoBehaviour
     }
     public void PlayerTrigSound(AudioSource audio, string tag)
     {
+        audio.volume = soundVolume;
+        audio.mute = isSoundMute;
         if (tag == "Door")
         {
             audio.PlayOneShot(ObjectSoundFile[0]);
