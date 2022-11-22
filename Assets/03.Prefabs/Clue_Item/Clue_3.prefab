@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2624751851046985235}
   - component: {fileID: 2624751851046985234}
   - component: {fileID: 2624751851046985233}
+  - component: {fileID: -9166896855043416238}
   m_Layer: 0
   m_Name: Clue_3
   m_TagString: Untagged
@@ -94,3 +95,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &-9166896855043416238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2624751851046985232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b95abbe9ac5cc43b9a7aa80ce458ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item: {fileID: 11400000, guid: 81934081fdbca9941976ca916a702e71, type: 2}

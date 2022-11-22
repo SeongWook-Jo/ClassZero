@@ -19,8 +19,22 @@ public class csStageManager : MonoBehaviour
     public csClearPoint clearChk;
 
     //아이템 스폰 관련 변수들
-    GameObject[] lockers;
-    Transform[] itemSpawnersTr;
+    GameObject[] phoneSpawns;
+    GameObject[] dollSpawns;
+    GameObject[] backpackSpawns;
+    GameObject[] sneakersSpawns;
+    GameObject[] noteSpawns;
+    GameObject[] sheetMusicSpawns;
+    Transform phoneSpawnTr;
+    Transform dollSpawnTr;
+    Transform backpackSpawnTr;
+    Transform sneakersSpawnTr;
+    Transform noteSpawnTr;
+    Transform sheetMusicSpawnTr;
+
+
+    //귀신의 최종 학년 반[0][1]에 저장
+    string enemyGrade;
 
     private void Awake()
     {
@@ -37,11 +51,13 @@ public class csStageManager : MonoBehaviour
         patrolTwoSpawner = GameObject.Find("PatrolTwoSpwn").GetComponent<Transform>();
         clearChk = GameObject.Find("CheckPoint").GetComponent<csClearPoint>();
         room = PhotonNetwork.room;
+        phoneSpawns = GameObject.FindGameObjectsWithTag("PhoneSpawns");
+        dollSpawns = GameObject.FindGameObjectsWithTag("DollSpawns");
+        backpackSpawns = GameObject.FindGameObjectsWithTag("BackpackSpawns");
+        sneakersSpawns = GameObject.FindGameObjectsWithTag("SneakersSpawns");
+        noteSpawns = GameObject.FindGameObjectsWithTag("NoteSpawns");
+        sheetMusicSpawns = GameObject.FindGameObjectsWithTag("SheetMusicSpawns");
         PhotonNetwork.automaticallySyncScene = true;
-
-        //아이템스폰관련
-        lockers = GameObject.FindGameObjectsWithTag("SpawnLockers");
-        itemSpawnersTr = GameObject.Find("ItemSpawner").GetComponentsInChildren<Transform>();
     }
     // Start is called before the first frame update
     IEnumerator Start()
@@ -49,8 +65,11 @@ public class csStageManager : MonoBehaviour
         //캐릭터 생성 코루틴 실행
 
         StartCoroutine(CreatePlayer());
-        StartCoroutine(CreateItem());
-        if(PhotonNetwork.isMasterClient) StartCoroutine(CreateEnemy());
+        if (PhotonNetwork.isMasterClient)
+        {
+            StartCoroutine(CreateItem());
+            StartCoroutine(CreateEnemy());
+        }
         //플레이어 생성이 최대 3초 걸리기 때문에 3.5초뒤에 플레이어 목록을 받아옴. players를 기준으로 GameOver 씬 넘김 진행할 예정.
         yield return new WaitForSeconds(3.5f);
         players = GameObject.FindGameObjectsWithTag("Player");
@@ -61,12 +80,22 @@ public class csStageManager : MonoBehaviour
     }
     IEnumerator CreateItem()
     {
-        Transform itemTr;
-        //핸드폰 랜덤 스폰(락커에만)
-        Transform phoneSpawnTr = lockers[Random.Range(0, lockers.Length)].transform;
-       GameObject phone= PhotonNetwork.InstantiateSceneObject("Phone", phoneSpawnTr.position, phoneSpawnTr.rotation, 0, null);
+        //아이템 스폰 위치 지정 및 스폰
+        phoneSpawnTr =  phoneSpawns[Random.Range(0, phoneSpawns.Length)].transform;
+        PhotonNetwork.InstantiateSceneObject("ItemPhone", phoneSpawnTr.position, phoneSpawnTr.rotation, 0, null);
 
-        //phone.GetComponent<ItemPickUp>().item.clueText.text = " asdf"; 단서 예시.
+        dollSpawnTr = dollSpawns[Random.Range(0, dollSpawns.Length)].transform;
+        PhotonNetwork.InstantiateSceneObject("ItemDoll", dollSpawnTr.position, dollSpawnTr.rotation, 0, null);
+
+        backpackSpawnTr = backpackSpawns[Random.Range(0, backpackSpawns.Length)].transform;
+        PhotonNetwork.InstantiateSceneObject("ItemBackpack", backpackSpawnTr.position, backpackSpawnTr.rotation, 0, null);
+
+
+        sneakersSpawnTr = sneakersSpawns[Random.Range(0, sneakersSpawns.Length)].transform;
+        PhotonNetwork.InstantiateSceneObject("ItemSneakers", sneakersSpawnTr.position, sneakersSpawnTr.rotation, 0, null);
+
+        noteSpawnTr = noteSpawns[Random.Range(0, noteSpawns.Length)].transform;
+        PhotonNetwork.InstantiateSceneObject("ItemNote", noteSpawnTr.position, noteSpawnTr.rotation, 0, null);
 
         ////인형 랜덤 스폰
         //Transform dollSpawnTr = itemSpawners[Random.Range(0, itemSpawners.Length)].transform;
@@ -85,11 +114,14 @@ public class csStageManager : MonoBehaviour
 
 
 
-        GameObject test1 = GameObject.Find("test1");
-        GameObject test2 = GameObject.Find("test2");
-        PhotonNetwork.Instantiate("pig", test1.transform.position, Quaternion.identity, 0);
-        Instantiate<GameObject>(Resources.Load<GameObject>("Pickaxe"), test1.transform.position, Quaternion.identity);
-       
+
+        //단서 스폰 예시
+        //GameObject test1 = GameObject.Find("test1");
+        //GameObject test2 = GameObject.Find("test2");
+        //PhotonNetwork.Instantiate("pig", test1.transform.position, Quaternion.identity, 0);
+        //Instantiate<GameObject>(Resources.Load<GameObject>("Pickaxe"), test1.transform.position, Quaternion.identity);
+        //phone.GetComponent<ItemPickUp>().item.clueText.text = " asdf"; 단서 예시.
+
         yield return null;
     }
     IEnumerator GameClear()

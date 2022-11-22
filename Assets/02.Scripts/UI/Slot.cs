@@ -32,23 +32,6 @@ public class Slot : MonoBehaviour
     public void AddItem(Item _item)
     {
         item = _item;  // 어떤 아이템을 먹었는지 아이템 정보를 받아와서
-        //itemImage.sprite = item.itemImage; // 그 아이템 정보에 들어있는 이미지를 Slot의 sprite에 넣어준다.
-        //itemCount = _count;
-        //clue는 text를 받아와야...
-        //clueText = item.clueText;  
-
-
-        //우리는 AddItem에서 이 부분은 필요 없음.. 아이템 개수랑 개수 txt 띄워주는 부분
-        //if (item.itemType != Item.ItemType.Clue)
-        //{
-        //    go_CountImage.SetActive(true);
-        //    text_Count.text = itemCount.ToString();
-        //}
-        //else
-        //{
-        //    text_Count.text = "0";
-        //    go_CountImage.SetActive(false);
-        //}
 
         if(item.itemType != Item.ItemType.Clue) // 아이템 타입이 clue가 아니라면. 즉 Item 타입일때
         {
@@ -57,21 +40,12 @@ public class Slot : MonoBehaviour
         }
         else
         {
-            // 아이템 타입이 clue, text를 Inven_Clue의 Scroll View 하위의 Content 및에 ClueList_prf, Clueprf 
-            // 의 text에 받아와 주는걸 함...
-            //clueText = item.clueText;
 
-            // 아이템 타입이 clue, text를 Inven_Clue의 Scroll View 하위의 Content 및에 ClueList_prf, Clueprf 
-            // 의 text에 받아와 주는걸 함...
-            //clueText.text = _item.clueInText[1];
             Debug.Log("Clue");
-            // ClueList_prf를 ScrollView 영역에 생성하는 파트----------------
-            //GameObject textinfo = (GameObject)Instantiate(ClueList_prf);
+
             textinfo = Instantiate<GameObject>(ClueList_prf, transform);
             Debug.Log(textinfo);
             textinfo.GetComponentInChildren<Text>().text = Item.clueInText[1];
-            
-            //textinfo.transform.SetParent(scrollContents.transform, false);
 
             int rowCount = 0;
             scrollContents.GetComponent<GridLayoutGroup>().constraintCount = ++rowCount;

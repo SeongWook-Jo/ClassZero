@@ -317,17 +317,17 @@ public class csPlayerCtrl : MonoBehaviour
                 }
                 return;
             }
-            if (hitInfo.collider.tag == "OfficeChair")
-            {
-                txtPopup.text = "";
-                TrigPopup.SetActive(true);
-                if (Input.GetMouseButtonDown(0))
-                {
-                    hitInfo.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
-                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
-                }
-                return;
-            }
+            //if (hitInfo.collider.tag == "OfficeChair")//임시로 빼둠 넣을때는 코루틴을 애니메이터로 변경해서 넣어서, 컨트롤러, 클립 만들어야함.
+            //{
+            //    txtPopup.text = "";
+            //    TrigPopup.SetActive(true);
+            //    if (Input.GetMouseButtonDown(0))
+            //    {
+            //        hitInfo.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
+            //        pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
+            //    }
+            //    return;
+            //}
             if (hitInfo.collider.tag == "Switch")
             {
                 txtPopup.text = "";

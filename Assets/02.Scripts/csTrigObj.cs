@@ -23,11 +23,9 @@ public class csTrigObj : MonoBehaviour
         pv.RPC("DoorAnim", PhotonTargets.All);
     }
 
-    [ContextMenu("TestChair")]
     public void ChairOnOff()
     {
-        if (transform.localPosition.x > 0.5) StartCoroutine("ChairOut");
-        else StartCoroutine("ChairIn");
+        pv.RPC("ChairAnim", PhotonTargets.All);
     }
     public void OfficeChairOnOff()
     {
@@ -53,7 +51,11 @@ public class csTrigObj : MonoBehaviour
     {
         anim.SetTrigger("OnOff");
     }
-
+    [PunRPC]
+    void ChairAnim()
+    {
+        anim.SetTrigger("OnOff");
+    }
 
     IEnumerator ChairOut()
     {
