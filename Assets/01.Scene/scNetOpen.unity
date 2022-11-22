@@ -2841,11 +2841,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 29175862baba0024e9a7e3052cd851bf, type: 3}
   PlayerSoundFile:
   - {fileID: 8300000, guid: 43c7d38f20e95a947858e577be5e7834, type: 3}
+  - {fileID: 8300000, guid: 5214d07086a35af4f86bf570dce126cb, type: 3}
   - {fileID: 8300000, guid: 92f31eb6483fce84a85cdcf6558ea92f, type: 3}
   GhostSoundFile:
   - {fileID: 8300000, guid: fcc9c3ee8ed0ea44b85bf446a35a65b8, type: 3}
   - {fileID: 8300000, guid: 7ac97f27cb08c7d4fbb2a104cb6d7131, type: 3}
   - {fileID: 8300000, guid: 6ac95cb186ae27546880343944050631, type: 3}
+  EnemyPatrolSoundFile:
+  - {fileID: 8300000, guid: 43c7d38f20e95a947858e577be5e7834, type: 3}
+  - {fileID: 8300000, guid: 74a0f283e4e4c514d871a8dfc2d806f5, type: 3}
+  - {fileID: 8300000, guid: 39c4cd4e6adeb234b9df96f17d23c5a1, type: 3}
   ObjectSoundFile:
   - {fileID: 8300000, guid: 3d49688b149bae74692f31ea6e2088d4, type: 3}
   - {fileID: 8300000, guid: b5b671f43cf349d46a44541d0ffe49c6, type: 3}

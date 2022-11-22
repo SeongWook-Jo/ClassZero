@@ -61,7 +61,7 @@ public class csPlayerCtrl : MonoBehaviour
     private bool isMove = false;
     private bool isFind = false;
     private bool isPickup = false;
-    [HideInInspector]public bool isStop = false;
+    [HideInInspector] public bool isStop = false;
     private bool isObserve = false;
 
     //Raycast를 위한 변수
@@ -93,7 +93,7 @@ public class csPlayerCtrl : MonoBehaviour
 
     //사운드작업
     SoundManager soundManager;
-    AudioSource audio;
+    AudioSource[] audios;
     void Awake()
     {
         pv = GetComponent<PhotonView>();
@@ -103,7 +103,7 @@ public class csPlayerCtrl : MonoBehaviour
         currRot = transform.rotation;
         observeCamera = transform.Find("ObserveCamera");
         StartCoroutine(this.ActivePlayer());
-        audio = GetComponent<AudioSource>();
+        audios = GetComponents<AudioSource>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         if (pv.isMine)
         {
@@ -302,7 +302,7 @@ public class csPlayerCtrl : MonoBehaviour
                     //전체 플레이어에게 동기화를 해주기 위해 pv.RPC로 쏴줌.
                     //csTrigObj 스크립트 내에 함수 실행
                     hitInfo.collider.transform.parent.parent.SendMessage("DoorOnOff", null, SendMessageOptions.DontRequireReceiver);
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -313,7 +313,7 @@ public class csPlayerCtrl : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     hitInfo.collider.transform.SendMessage("ChairOnOff", null, SendMessageOptions.DontRequireReceiver);
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -324,7 +324,7 @@ public class csPlayerCtrl : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     hitInfo.collider.transform.SendMessage("OfficeChairOnOff", null, SendMessageOptions.DontRequireReceiver);
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -341,7 +341,7 @@ public class csPlayerCtrl : MonoBehaviour
                     //{
                     //    l.enabled = !l.enabled;
                     //}
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -353,8 +353,8 @@ public class csPlayerCtrl : MonoBehaviour
                 {
                     Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
                     UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
-                    PhotonNetwork.Destroy(hitInfo.transform.gameObject);
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    hitInfo.collider.SendMessage("ItemDestroy", null, SendMessageOptions.DontRequireReceiver);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
             }
@@ -366,8 +366,8 @@ public class csPlayerCtrl : MonoBehaviour
                 {
                     Debug.Log(hitInfo.transform.GetComponent<ItemPickUp>().item.itemName + " 획득했습니다");
                     UIManager.theInventory.AcquireItem(hitInfo.transform.GetComponent<ItemPickUp>().item);  /// AcquireItem() => Inven script 안의 슬롯에 아이템 채워넣기
-                    Destroy(hitInfo.transform.gameObject);
-                    pv.RPC("PlaySound", PhotonTargets.All, hitInfo.collider.tag);
+                    Destroy(hitInfo.collider.gameObject);
+                    pv.RPC("TrigSound", PhotonTargets.All, hitInfo.collider.tag);
                 }
                 return;
 
@@ -382,11 +382,15 @@ public class csPlayerCtrl : MonoBehaviour
 
     }
     [PunRPC]
-    void PlaySound(string objTag)
+    void TrigSound(string objTag)
     {
-        soundManager.Play(audio, objTag);
+        soundManager.PlayerTrigSound(audios[1], objTag);
     }
-
+    [PunRPC]
+    void StateSound(string state)
+    {
+        soundManager.PlayerStateSound(audios[0], state);
+    }
     //키 입력에 따라서 앉기, 천천히 걷기, 달리기 등 변수 변경 -- 임시로 설정했으나 추후 회의 후 변경예정 // 이동 속도도 여기서 변경
     void MoveState()
     {
@@ -490,6 +494,7 @@ public class csPlayerCtrl : MonoBehaviour
     {
         if (isDie)
         {
+            pv.RPC("StateSound", PhotonTargets.All, "Die");
             playerState = State.DIE;
             playerNetAnim = (int)State.DIE;
         }
@@ -497,32 +502,38 @@ public class csPlayerCtrl : MonoBehaviour
         {
             if (isRun)
             {
+                pv.RPC("StateSound", PhotonTargets.All, "Run");
                 playerState = State.RUN;
                 playerNetAnim = (int)State.RUN;
             }
             else if (isDown)
             {
+                pv.RPC("StateSound", PhotonTargets.All, "Idle");
                 playerState = State.DOWNWALK;
                 playerNetAnim = (int)State.DOWNWALK;
             }
             else if (isSlow)
             {
+                pv.RPC("StateSound", PhotonTargets.All, "Idle");
                 playerState = State.SLOWWALK;
                 playerNetAnim = (int)State.SLOWWALK;
             }
             else
             {
+                pv.RPC("StateSound", PhotonTargets.All, "Walk");
                 playerState = State.WALK;
                 playerNetAnim = (int)State.WALK;
             }
         }
         else if (isDown)
         {
+            pv.RPC("StateSound", PhotonTargets.All, "Idle");
             playerState = State.DOWN;
             playerNetAnim = (int)State.DOWN;
         }
         else
         {
+            pv.RPC("StateSound", PhotonTargets.All, "Idle");
             playerState = State.IDLE;
             playerNetAnim = (int)State.IDLE;
         }

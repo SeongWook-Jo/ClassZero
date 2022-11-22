@@ -61,7 +61,7 @@ public class ReadyManager : MonoBehaviour
             PR[1] = (bool)playerReady[1];
         if (playerReady[2] != null)
             PR[2] = (bool)playerReady[2];
-        if (PR[0] && PR[1] && PR[2])
+        if (PR[0]/* && PR[1] && PR[2]*/)
         {
             PR[0] = (bool)playerReady[0];
             StartBtn.SetActive(true);

@@ -10,8 +10,12 @@ public class SoundManager : MonoBehaviour
 {
     private PhotonView pv;
     public AudioClip[] UIsoundFile; //UI용 오디오 클립 저장 배열
+    [Tooltip("0번 Walk, 1번 Run, 2번 Die")]
     public AudioClip[] PlayerSoundFile;//플레이어 오디오클립
     public AudioClip[] GhostSoundFile;//고스트 오디오클립
+    [Tooltip("0번 Walk, 1번 Run, 2번 Kill 현재 죽일 때 사운드안남..")]
+    public AudioClip[] EnemyPatrolSoundFile;//배회 귀신 오디오 클립
+    [Tooltip("0번 문여는 소리 1번 사물함 2번 의자 3번 사무실의자 4번 스위치 5번 아이템 6번 단서")]
     public AudioClip[] ObjectSoundFile;//사물 오디오클립
     public AudioClip[] BGMSoundFile;//배경음악 오디오클립
     private AudioSource[] audioSources = new AudioSource[4];
@@ -20,6 +24,7 @@ public class SoundManager : MonoBehaviour
     public Slider bgm_sl;
     public bool onoff = false;
     public static SoundManager instance = null;
+    bool playerDie = false;
     //public Slider sEffect_sl;
 
     public Toggle bgm_tg;
@@ -75,7 +80,55 @@ public class SoundManager : MonoBehaviour
 
     //조성욱이 짜는 스크립트 영역 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
-    public void Play(AudioSource audio, string tag)
+    public void EnemyPatrolStateSound(AudioSource audio, string state)
+    {
+        if (!audio.isPlaying)
+        {
+            if (state == "Kill")
+            {
+                audio.PlayOneShot(EnemyPatrolSoundFile[2]);
+            }
+            else if (state == "Trace")
+            {
+                audio.PlayOneShot(EnemyPatrolSoundFile[1]);
+            }
+            else if (state == "Patrol")
+            {
+                audio.PlayOneShot(EnemyPatrolSoundFile[0]);
+            }
+            else
+            {
+                audio.Stop();
+            }
+        }
+    }
+    public void PlayerStateSound(AudioSource audio, string state)
+    {
+        if (!audio.isPlaying)
+        {
+            if (state == "Die")
+            {
+                if (!playerDie)
+                {
+                    audio.PlayOneShot(PlayerSoundFile[2]);
+                    playerDie = true;
+                }
+            }
+            else if (state == "Run")
+            {
+                audio.PlayOneShot(PlayerSoundFile[1]);
+            }
+            else if (state == "Walk")
+            {
+                audio.PlayOneShot(PlayerSoundFile[0]);
+            }
+            else
+            {
+                audio.Stop();
+            }
+        }
+    }
+    public void PlayerTrigSound(AudioSource audio, string tag)
     {
         if (tag == "Door")
         {
@@ -123,9 +176,9 @@ public class SoundManager : MonoBehaviour
         UIaudio.Play();
         soundVolume = bgm_sl.value;
         //soundVolume = sEffect_sl.value;
-        
+
         isSoundMute = bgm_tg.isOn;
-        
+
         //isSoundMute = sEffect_tg.isOn;
 
         AudioSet();
@@ -297,7 +350,7 @@ public class SoundManager : MonoBehaviour
     {
         if (!audio.isPlaying)
         {
-            
+
             audio.Play();
         }
 
@@ -332,7 +385,7 @@ public class SoundManager : MonoBehaviour
     }
     public void PatrolGhostinSound(AudioSource audio)
     {
-        if(!audio.isPlaying)
+        if (!audio.isPlaying)
         {
             audio.clip = GhostSoundFile[1];
             audio.Play();
@@ -347,7 +400,7 @@ public class SoundManager : MonoBehaviour
     {
         if (!audio.isPlaying)
         {
-            audio.PlayOneShot(GhostSoundFile[2],2.0f);
+            audio.PlayOneShot(GhostSoundFile[2], 2.0f);
         }
     }
 }

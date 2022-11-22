@@ -30,8 +30,12 @@ public class csEnemyPatrol : MonoBehaviour
     private Quaternion currRot;
     private int netAnim;
     public EnemyKind enemyKind;
+    AudioSource audio;
+    SoundManager soundManager;
     private void Awake()
     {
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+        audio = GetComponent<AudioSource>();
         //네비연결
         nav = GetComponent<NavMeshAgent>();
         //플레이어 인원 확인
@@ -54,11 +58,11 @@ public class csEnemyPatrol : MonoBehaviour
             players = GameObject.FindGameObjectsWithTag("Player");
             //초기화
             if (enemyKind == EnemyKind.ONE) { baseTarget = baseTr[1]; nextDestCk = -1; }
-            else { baseTarget = baseTr[baseTr.Length-1]; nextDestCk = 1; }
-            
+            else { baseTarget = baseTr[baseTr.Length - 1]; nextDestCk = 1; }
+
 
             traceTarget = players[0].transform;
-            
+
             //범위안의 적 추적 다른 층은 못찾아감 + 계단도 못따라감.
             StartCoroutine("EnemyMovement");
         }
@@ -134,25 +138,34 @@ public class csEnemyPatrol : MonoBehaviour
             yield return null;
         }
     }
-    //애니메이션 변경 및 쏴주기
+    //애니메이션 변경 및 사운드 실행 , 사운드는 RPC로 넘겨서 사운드매니저와 연동
     void AnimSync(string animState)
     {
         if (animState == "Kill")
         {
             anim.Play("Kill");
+            pv.RPC("PatrolStateSound", PhotonTargets.All, "Kill");
             netAnim = 1;
         }
         else if (animState == "Run")
         {
             anim.Play("Run");
+            pv.RPC("PatrolStateSound", PhotonTargets.All, "Trace");
             netAnim = 2;
         }
 
         else
         {
             anim.Play("Walk");
+            pv.RPC("PatrolStateSound", PhotonTargets.All, "Patrol");
             netAnim = 3;
         }
+    }
+    //사운드매니저에 잇는 클립 실행.
+    [PunRPC]
+    public void PatrolStateSound(string state)
+    {
+        soundManager.EnemyPatrolStateSound(audio, state);
     }
 
     //네트워크애니메이션 동기화

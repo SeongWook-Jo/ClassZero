@@ -61,4 +61,8 @@ MonoBehaviour:
   - PlayerRunSound
   - PlayerSolowWalkSound
   - PlayerWalkSound
+  - NetItemDestroy
+  - StateSound
+  - TrigSound
+  - PatrolStateSound
   DisableAutoOpenWizard: 1
