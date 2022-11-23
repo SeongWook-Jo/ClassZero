@@ -14,7 +14,7 @@ public class ItemPickUp : MonoBehaviour
     }
     public void ItemDestroy()
     {
-        pv.RPC("NetItemDestroy", PhotonTargets.All);
+        pv.RPC("NetItemDestroy", PhotonTargets.MasterClient);
     }
     [PunRPC]
     public void NetItemDestroy()

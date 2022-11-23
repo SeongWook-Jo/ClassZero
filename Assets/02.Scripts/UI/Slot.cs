@@ -16,10 +16,6 @@ public class Slot : MonoBehaviour
     GameObject textinfo;
 
 
-    [SerializeField]
-    private GameObject go_CountImage;// 획득한 아이템이 있을 경우 파란색 동그라미 띄우기...이거도 필요 없을듯
-
-
     // 이미지의 투명도 조절.(아이템 이미지의 투명도 조절.. 인벤 아이템창 칸 투명도가 아니라)
     private void SetColor(float _alpha)
     {
@@ -62,6 +58,5 @@ public class Slot : MonoBehaviour
         itemImage.sprite = null;
         SetColor(0);
         //clueText.text = "";
-        go_CountImage.SetActive(false);
     }
 }

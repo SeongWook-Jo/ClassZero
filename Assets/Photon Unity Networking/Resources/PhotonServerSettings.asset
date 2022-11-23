@@ -66,4 +66,5 @@ MonoBehaviour:
   - TrigSound
   - PatrolStateSound
   - ChairAnim
+  - ItemDrop
   DisableAutoOpenWizard: 1

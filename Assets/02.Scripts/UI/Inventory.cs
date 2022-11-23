@@ -22,6 +22,13 @@ public class Inventory : MonoBehaviour
     //Clue 슬롯들 (추가)
     private Slot[] clueSlots;
 
+    PhotonView pv;
+
+    private void Awake()
+    {
+        pv = GetComponent<PhotonView>();
+    }
+
 
     // Use this for initialization
     void Start()
@@ -57,15 +64,40 @@ public class Inventory : MonoBehaviour
     }
     public void OnClickDrop0()
     {
-        slots[0].ClearSlot();
+        if (slots[0].item != null)
+        {
+            Transform playerTr = GameObject.Find("Player_FP").transform;
+            //아이템 드랍시 네트워크적으로 만들어줘야 해서 마스터 클라이언트 ->  PhotonNetwork.InstantiateSceneObject 사용, 인자값으로 현재 캐릭터 위치, 프리팹 네임을 전달함.
+            pv.RPC("ItemDrop", PhotonTargets.MasterClient, playerTr.position, slots[0].item.itemPrefab.name);
+            //PhotonNetwork.InstantiateSceneObject(slots[0].item.itemPrefab.name, playerTr.position, Quaternion.identity, 0,null);
+            slots[0].ClearSlot();
+        }
     }
     public void OnClickDrop1()
     {
-        slots[1].ClearSlot();
+        if (slots[1].item != null)
+        {
+            Transform playerTr = GameObject.Find("Player_FP").transform;
+            pv.RPC("ItemDrop", PhotonTargets.MasterClient, playerTr.position, slots[1].item.itemPrefab.name);
+            //PhotonNetwork.InstantiateSceneObject(slots[1].item.itemPrefab.name, playerTr.position, Quaternion.identity, 0, null);
+            slots[1].ClearSlot();
+        }
     }
     public void OnClickDrop2()
     {
-        slots[2].ClearSlot();
+        if (slots[1].item != null)
+        {
+            Transform playerTr = GameObject.Find("Player_FP").transform;
+            pv.RPC("ItemDrop", PhotonTargets.MasterClient, playerTr.position, slots[2].item.itemPrefab.name);
+            //PhotonNetwork.InstantiateSceneObject(slots[2].item.itemPrefab.name, playerTr.position, Quaternion.identity, 0, null);
+            slots[2].ClearSlot();
+        }
+    }
+
+    [PunRPC]
+    public void ItemDrop(Vector3 dropPo, string prfName)
+    {
+        PhotonNetwork.InstantiateSceneObject(prfName, dropPo, Quaternion.identity, 0, null);
     }
 }
 
