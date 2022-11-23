@@ -153,7 +153,6 @@ public class ReadyManager : MonoBehaviour
         //Key, Value 저장을 위한 해쉬테이블 생성 해쉬테이블 배열로 했으나 NullReference로 인해서 변수 한개로 생성
         Hashtable playerOpth = new Hashtable();
         //찾아준 사운드매니저 오브젝트의 함수을 실행해줍니다.
-        SoundManager.GetComponent<SoundManager>().UIStartSound();//방장이 눌렀으니 방장에게만 들려야할까?
         for (int i = 0;i<PhotonNetwork.room.PlayerCount; i++)
         {
             //배정된 위치를 할당해줌 PR[x] 

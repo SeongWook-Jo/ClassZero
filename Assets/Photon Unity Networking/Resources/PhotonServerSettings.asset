@@ -67,4 +67,5 @@ MonoBehaviour:
   - PatrolStateSound
   - ChairAnim
   - ItemDrop
+  - ClueSpawn
   DisableAutoOpenWizard: 1

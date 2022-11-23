@@ -37,11 +37,9 @@ public class Slot : MonoBehaviour
         else
         {
 
-            Debug.Log("Clue");
-
             textinfo = Instantiate<GameObject>(ClueList_prf, transform);
             Debug.Log(textinfo);
-            textinfo.GetComponentInChildren<Text>().text = Item.clueInText[1];
+            textinfo.GetComponentInChildren<Text>().text = _item.clueText;
 
             int rowCount = 0;
             scrollContents.GetComponent<GridLayoutGroup>().constraintCount = ++rowCount;
@@ -57,6 +55,5 @@ public class Slot : MonoBehaviour
         item = null;
         itemImage.sprite = null;
         SetColor(0);
-        //clueText.text = "";
     }
 }

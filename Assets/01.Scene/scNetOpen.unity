@@ -2833,34 +2833,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIsoundFile:
-  - {fileID: 8300000, guid: 21a831c63289d1e49ab559b3d5e9a88d, type: 3}
-  - {fileID: 8300000, guid: 5214d07086a35af4f86bf570dce126cb, type: 3}
-  - {fileID: 8300000, guid: 74a0f283e4e4c514d871a8dfc2d806f5, type: 3}
-  - {fileID: 8300000, guid: 4e625d8047af34a42be972371406c50a, type: 3}
-  - {fileID: 8300000, guid: 7f188c2a787b5dd42b5f950715a63b6e, type: 3}
-  - {fileID: 8300000, guid: 29175862baba0024e9a7e3052cd851bf, type: 3}
+  - {fileID: 8300000, guid: 095d5fff07188bd4c86df59bd9c8f226, type: 3}
+  - {fileID: 8300000, guid: d918811a97ce07649828c2d94de8d8e7, type: 3}
+  - {fileID: 8300000, guid: d918811a97ce07649828c2d94de8d8e7, type: 3}
+  - {fileID: 8300000, guid: a97f0a14d49f9214e95f56bcbdc22e61, type: 3}
+  - {fileID: 8300000, guid: 084a9749571301c4d8e1ce1e2427867a, type: 3}
+  - {fileID: 8300000, guid: a9d9942e94bc90241b7524d43e17aa7b, type: 3}
   PlayerSoundFile:
-  - {fileID: 8300000, guid: 43c7d38f20e95a947858e577be5e7834, type: 3}
-  - {fileID: 8300000, guid: 5214d07086a35af4f86bf570dce126cb, type: 3}
-  - {fileID: 8300000, guid: 92f31eb6483fce84a85cdcf6558ea92f, type: 3}
+  - {fileID: 8300000, guid: 10bbb7da3ae1f124e98e3bc91e429ae7, type: 3}
+  - {fileID: 8300000, guid: 0bf1dfce7da7b5a4d8fa9eb3de7517d2, type: 3}
+  - {fileID: 8300000, guid: 77e7851994b63794085f72b66de222cc, type: 3}
   GhostSoundFile:
-  - {fileID: 8300000, guid: fcc9c3ee8ed0ea44b85bf446a35a65b8, type: 3}
-  - {fileID: 8300000, guid: 7ac97f27cb08c7d4fbb2a104cb6d7131, type: 3}
-  - {fileID: 8300000, guid: 6ac95cb186ae27546880343944050631, type: 3}
+  - {fileID: 8300000, guid: f7364f9b9fd90fe459bec2a346360e6a, type: 3}
+  - {fileID: 8300000, guid: 6bc3bd2488431b04d9e1fb5f0145c3b6, type: 3}
+  - {fileID: 8300000, guid: e17b6c11a20fa7e4585c628c3d1bedec, type: 3}
   EnemyPatrolSoundFile:
-  - {fileID: 8300000, guid: 43c7d38f20e95a947858e577be5e7834, type: 3}
-  - {fileID: 8300000, guid: 74a0f283e4e4c514d871a8dfc2d806f5, type: 3}
-  - {fileID: 8300000, guid: 39c4cd4e6adeb234b9df96f17d23c5a1, type: 3}
+  - {fileID: 8300000, guid: f7364f9b9fd90fe459bec2a346360e6a, type: 3}
+  - {fileID: 8300000, guid: 6bc3bd2488431b04d9e1fb5f0145c3b6, type: 3}
+  - {fileID: 8300000, guid: e17b6c11a20fa7e4585c628c3d1bedec, type: 3}
   ObjectSoundFile:
   - {fileID: 8300000, guid: 3d49688b149bae74692f31ea6e2088d4, type: 3}
-  - {fileID: 8300000, guid: b5b671f43cf349d46a44541d0ffe49c6, type: 3}
-  - {fileID: 8300000, guid: 0cd80c0eef6841841aca6830934974e4, type: 3}
+  - {fileID: 8300000, guid: a710c7e89c922414cb10371381c7a579, type: 3}
+  - {fileID: 8300000, guid: 168b533dac97e6f48834848dc99eb94a, type: 3}
   - {fileID: 8300000, guid: 0382533b8c91efa4a9135232692576de, type: 3}
-  - {fileID: 8300000, guid: 5214d07086a35af4f86bf570dce126cb, type: 3}
+  - {fileID: 8300000, guid: d30d016ed3dd6fa42b1216435ca818cb, type: 3}
   BGMSoundFile:
-  - {fileID: 8300000, guid: 425426fc2306a344c94eafa8cc9f5ec8, type: 3}
-  - {fileID: 8300000, guid: 4b94fd59f58781e458ac48d46f30ddf7, type: 3}
-  - {fileID: 8300000, guid: 29fe1cac0e443164a9edebeeda4894c2, type: 3}
+  - {fileID: 8300000, guid: 084a9749571301c4d8e1ce1e2427867a, type: 3}
+  - {fileID: 8300000, guid: a9d9942e94bc90241b7524d43e17aa7b, type: 3}
+  - {fileID: 8300000, guid: 80dd27cb47487f549bae5c54d9759671, type: 3}
   soundVolume: 1
   isSoundMute: 0
   bgm_sl: {fileID: 1583192935}

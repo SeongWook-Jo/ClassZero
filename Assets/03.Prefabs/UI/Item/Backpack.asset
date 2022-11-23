@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Backpack
   itemType: 0
-  itemImage: {fileID: 0}
+  itemImage: {fileID: 21300000, guid: ec5d75547d1dd59429b26a4cc1430f24, type: 3}
   itemPrefab: {fileID: 5769446994643204690, guid: 5d1e1dcd6c9afd44cb1ff5131b744630,
     type: 3}
   clueText: {fileID: 0}

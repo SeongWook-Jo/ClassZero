@@ -12,7 +12,7 @@ public class csInGameUiManager : MonoBehaviour
     // Inven
     public GameObject Inven_Item; // 탈출 아이템 인벤 페이지 (Inven - Pop)
     public GameObject Inven_CluePage;  // 단서 페이지 (Inven - Pop)
-    public GameObject Inven_Special;  // 특수 아이템 인벤 페이지 (Inven - Pop)
+    //public GameObject Inven_Special;  // 특수 아이템 인벤 페이지 (Inven - Pop)
     //단서 프리팹
     public GameObject Inven_ClueList; //단서들 리스트 불러와지는 프리팹, ClueList_Prf 으로 태그달았음
     public GameObject Inven_Clue; //단서 프리팹, CluePrf 으로 태그 달았음
@@ -137,14 +137,14 @@ public class csInGameUiManager : MonoBehaviour
     public void OnClickInven_Item()
     {
         Inven_CluePage.SetActive(false);
-        Inven_Special.SetActive(false);
+        //Inven_Special.SetActive(false);
 
         Inven_Item.SetActive(true);
     }
     public void OnClickInven_Clue()  // 단서 Btn 클릭하면 Scroll View (단서 리스트들이 뜰 곳) Popup 
     {
         Inven_Item.SetActive(false);
-        Inven_Special.SetActive(false);
+        //Inven_Special.SetActive(false);
 
         Inven_CluePage.SetActive(true); //  scroll view 가 popup 되고
     }
@@ -161,7 +161,7 @@ public class csInGameUiManager : MonoBehaviour
         Inven_Item.SetActive(false);
         Inven_CluePage.SetActive(false);
 
-        Inven_Special.SetActive(true);
+        //Inven_Special.SetActive(true);
     }
     public void OnClick_OpenTutorial()
     {
