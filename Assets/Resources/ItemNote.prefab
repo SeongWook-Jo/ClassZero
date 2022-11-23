@@ -170,9 +170,9 @@ GameObject:
   - component: {fileID: 33799047194329006}
   - component: {fileID: 23515938872195488}
   - component: {fileID: 6519888768125578690}
-  - component: {fileID: 8862724759569436181}
   - component: {fileID: -8710769084455273937}
   - component: {fileID: -152480093117558852}
+  - component: {fileID: 6824999720848190555}
   m_Layer: 8
   m_Name: ItemNote
   m_TagString: Item
@@ -256,19 +256,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item: {fileID: 11400000, guid: 84f0b7eafdfc1754d8378db4b8e4ae78, type: 2}
---- !u!65 &8862724759569436181
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1884156196641044}
-  m_Material: {fileID: 13400000, guid: 578093c7c677cb643a82b170c251fac2, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.19275835, y: 0.026740778, z: 0.26287383}
-  m_Center: {x: -0.08598535, y: 0, z: -0.001529634}
 --- !u!54 &-8710769084455273937
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -305,9 +292,23 @@ MonoBehaviour:
   onSerializeTransformOption: 3
   onSerializeRigidBodyOption: 2
   ownershipTransfer: 0
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 0}
   ObservedComponentsFoldoutOpen: 1
   viewIdField: 0
   instantiationId: -1
   currentMasterID: -1
   isRuntimeInstantiated: 0
+--- !u!65 &6824999720848190555
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884156196641044}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.13434307, y: 0.013370389, z: 0.18032683}
+  m_Center: {x: -0.06001211, y: 0, z: -0.000000007450581}
